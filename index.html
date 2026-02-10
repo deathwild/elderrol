@@ -5,9 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Elderrol Web App</title>
   <style>
-    :root{--bg:#0b1020;--card:#121a33;--muted:#9aa3b2;--text:#e9edf5;--pri:#667eea;--pri2:#764ba2;--danger:#ff4d4f;--ok:#3ad29f;}
+    :root{
+      --bg:#0b1020;--card:#121a33;--muted:#9aa3b2;--text:#e9edf5;
+      --pri:#667eea;--pri2:#764ba2;--danger:#ff4d4f;--ok:#3ad29f;
+      --border:rgba(255,255,255,.10);
+    }
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:radial-gradient(1200px 600px at 15% -10%, rgba(102,126,234,.35), transparent 55%),radial-gradient(900px 500px at 95% 10%, rgba(118,75,162,.25), transparent 55%),var(--bg);color:var(--text)}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(102,126,234,.35), transparent 55%),
+        radial-gradient(900px 500px at 95% 10%, rgba(118,75,162,.25), transparent 55%),
+        var(--bg);
+      color:var(--text)
+    }
     a{color:#bcd0ff;text-decoration:none}
     a:hover{text-decoration:underline}
 
@@ -16,16 +26,16 @@
     .brand{display:flex;gap:10px;align-items:center}
     .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--pri),var(--pri2));display:grid;place-items:center;font-weight:800}
     .title{font-size:18px;font-weight:700}
-    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid rgba(255,255,255,.10)}
 
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--muted);border:1px solid var(--border)}
     .rightTools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 
-    .card{background:rgba(18,26,51,.72);backdrop-filter: blur(8px);border:1px solid rgba(255,255,255,.10);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+    .card{background:rgba(18,26,51,.72);backdrop-filter: blur(8px);border:1px solid var(--border);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
     .panel{padding:14px}
 
     .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-    .tab{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);color:var(--text);padding:9px 12px;border-radius:999px;cursor:pointer;user-select:none}
+    .tab{border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);padding:9px 12px;border-radius:999px;cursor:pointer;user-select:none}
     .tab.active{background:linear-gradient(135deg,rgba(102,126,234,.28),rgba(118,75,162,.22));border-color:rgba(102,126,234,.35)}
 
     .section{display:none;margin-top:14px}
@@ -38,10 +48,9 @@
     .input:focus,select:focus,textarea:focus{border-color:rgba(102,126,234,.65)}
     textarea{min-height:92px;resize:vertical}
 
-    .btn{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.08);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer;transition:transform .05s ease}
+    .btn{border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--text);padding:9px 12px;border-radius:12px;cursor:pointer}
     .btn:hover{filter:brightness(1.06)}
-    .btn:active{transform:translateY(1px)}
-    .btn[disabled]{opacity:.55;cursor:not-allowed;transform:none}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
     .btn-primary{background:linear-gradient(135deg,rgba(102,126,234,.95),rgba(118,75,162,.95));border:none}
     .btn-danger{background:rgba(255,77,79,.14);border-color:rgba(255,77,79,.35);color:#ffd7d7}
     .btn-ghost{background:transparent}
@@ -51,40 +60,42 @@
     .alert{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06)}
     .alert.ok{border-color:rgba(58,210,159,.35);background:rgba(58,210,159,.10)}
     .alert.err{border-color:rgba(255,77,79,.35);background:rgba(255,77,79,.10)}
-    .alert.info{border-color:rgba(102,126,234,.35);background:rgba(102,126,234,.10)}
 
-    .skill-card{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.20);margin-bottom:10px}
-    .skill-card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .sname{font-weight:700;font-size:15px}
-    .smeta{color:var(--muted);font-size:12px;margin-top:4px}
-    .sdesc{margin-top:10px;color:#d6dceb;line-height:1.35}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+    .muted{color:var(--muted)}
 
-    /* Skills split layout */
-    .skillLayout{display:grid;grid-template-columns:340px 1fr;gap:12px}
+    /* List cards */
+    .item-card{padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.20);margin-bottom:10px}
+    .item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .iname{font-weight:700;font-size:15px}
+    .imeta{color:var(--muted);font-size:12px;margin-top:4px}
+    .idesc{margin-top:10px;color:#d6dceb;line-height:1.35}
+
+    /* Skills layout */
+    .skillLayout{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:start}
+    .treeGroups{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 28px);overflow:auto}
+
     .treeGroups h3{margin:12px 0 8px;font-size:13px;color:#cfd6e6;font-weight:700;letter-spacing:.3px}
     .tiles{display:flex;flex-direction:column;gap:8px}
     .tile{display:flex;gap:10px;align-items:center;padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer}
     .tile:hover{border-color:rgba(102,126,234,.35)}
-    .tile.active{outline:3px solid rgba(102,126,234,.75)}
+    .tile.active{outline:3px solid rgba(102,126,234,.65)}
     .icon{width:34px;height:34px;border-radius:12px;background:rgba(102,126,234,.18);border:1px solid rgba(102,126,234,.22);display:grid;place-items:center;font-weight:800}
     .tname{font-weight:700;font-size:13px}
     .tsub{font-size:12px;color:var(--muted)}
 
-    .skillHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+    .skillHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-end;flex-wrap:wrap}
     .skillTitle{margin:0;font-size:16px}
     .skillMeta{margin-top:6px;color:var(--muted);font-size:12px}
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 
-    /* Make tree sidebar usable on desktop */
-    @media (min-width:981px){
-      .treeGroups{position:sticky;top:12px;max-height:calc(100vh - 120px);overflow:auto}
-    }
-    /* On mobile/tablet: hide tree sidebar, use dropdown */
-    .mobileTreeRow{display:none}
+    /* Mobile: tree panel jadi drawer + select */
+    .mobileTreeBar{display:none}
     @media (max-width:980px){
       .skillLayout{grid-template-columns:1fr}
       .treeGroups{display:none}
-      .mobileTreeRow{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:8px}
+      .mobileTreeBar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+      .mobileTreeBar .input, .mobileTreeBar select{min-width:220px;flex:1}
     }
 
     /* Modals */
@@ -99,19 +110,24 @@
     .wItem{display:flex;gap:8px;align-items:center;padding:9px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer}
     .wItem input{accent-color:var(--pri)}
 
-    /* Admin-only elements toggle */
+    /* Quest image */
+    .qimg{width:100%;max-height:260px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.25)}
+    .qimg.small{max-height:180px}
+
+    /* Info / Neura */
+    .infoGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:980px){.infoGrid{grid-template-columns:1fr}}
+    .pre{white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px;
+      background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px;max-height:320px;overflow:auto}
+    details summary{cursor:pointer;color:#cfe0ff}
+
+    /* Admin-only toggle */
     .admin-only{display:none}
     body.is-admin .admin-only{display:initial}
 
-    /* Small helpers */
-    .muted{color:var(--muted)}
-    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
-
-    /* Quest image */
-    .qimg{width:100%;max-height:240px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.10);margin-top:8px;background:rgba(0,0,0,.18)}
-    .qthumb{width:100%;max-height:160px;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.10);margin-top:8px;background:rgba(0,0,0,.18);cursor:pointer}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:12px}
-    pre{white-space:pre-wrap;word-break:break-word}
+    /* Tiny loader */
+    .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:rgba(255,255,255,.9);border-radius:50%;animation:rot .7s linear infinite;vertical-align:-2px;margin-right:6px}
+    @keyframes rot{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -121,12 +137,11 @@
         <div class="logo">ER</div>
         <div>
           <div class="title">Elderrol Web App</div>
-          <div id="statusText" class="muted" style="font-size:12px">Siapkan WEB_APP_URL dulu…</div>
+          <div id="statusText" class="muted" style="font-size:12px">Menghubungkan ke spreadsheet…</div>
         </div>
       </div>
-
       <div class="rightTools">
-        <div class="pill">Live</div>
+        <div id="modePill" class="pill">Live</div>
         <button id="refreshAll" class="btn">⟳ Refresh</button>
         <button id="adminBtn" class="btn">🔐 Login Admin</button>
       </div>
@@ -171,7 +186,7 @@
     <!-- Skills -->
     <section id="skills" class="section">
       <div class="skillLayout">
-        <div class="card panel treeGroups">
+        <div class="card panel treeGroups" aria-label="Skill tree panel">
           <div class="row" style="justify-content:space-between">
             <div>
               <div class="muted" style="font-size:12px">Skill Tree</div>
@@ -179,39 +194,30 @@
             </div>
             <button id="addTreeBtn" class="btn btn-primary admin-only">+ Tree</button>
           </div>
-
           <div class="hr"></div>
-
           <h3>Weapon</h3>
           <div id="gWeapon" class="tiles"></div>
-
           <h3>Buff</h3>
           <div id="gBuff" class="tiles"></div>
-
           <h3>Assist</h3>
           <div id="gAssist" class="tiles"></div>
-
           <h3>Other</h3>
           <div id="gOther" class="tiles"></div>
         </div>
 
         <div class="card panel">
+          <div class="mobileTreeBar">
+            <select id="mobileTreeSelect"></select>
+            <button id="openTreeDrawer" class="btn">Daftar Tree</button>
+          </div>
+
           <div class="skillHead">
             <div>
               <h2 id="treeTitle" class="skillTitle">Belum memilih tree</h2>
               <div id="treeMeta" class="skillMeta">Klik salah satu tree di panel kiri.</div>
-
-              <div class="mobileTreeRow">
-                <div style="min-width:220px">
-                  <div class="muted" style="font-size:12px;margin-bottom:6px">Pilih tree</div>
-                  <select id="mobileTreeSelect"></select>
-                </div>
-                <button id="mobileOpenTree" class="btn admin-only">Kelola Tree</button>
-              </div>
             </div>
-
             <div class="row" style="align-items:flex-end">
-              <div style="min-width:220px;flex:1">
+              <div style="min-width:220px">
                 <div class="muted" style="font-size:12px;margin-bottom:6px">Cari skill</div>
                 <input id="skillSearch" class="input" placeholder="Cari nama / deskripsi" />
               </div>
@@ -235,13 +241,18 @@
           <div>
             <div class="muted" style="font-size:12px;margin-bottom:6px">Kirim Pengumpulan Quest</div>
             <input id="qIgn" class="input" placeholder="IGN (wajib)" />
+
             <div style="margin-top:10px">
+              <div class="muted" style="font-size:12px;margin-bottom:6px">Screenshot (gambar)</div>
               <input id="qFile" class="input" type="file" accept="image/*" />
-              <img id="qPreview" class="qimg" alt="Preview" style="display:none" />
-              <div class="note" style="padding:6px 2px 0">Upload screenshot (gambar). Akan disimpan ke ImgBB.</div>
+              <div id="qPreviewWrap" style="margin-top:10px;display:none">
+                <img id="qPreview" class="qimg" alt="preview" />
+              </div>
+              <div class="note" style="padding-top:6px">Upload otomatis ke ImgBB lalu disimpan ke spreadsheet.</div>
             </div>
+
             <div class="row" style="margin-top:10px">
-              <button id="qSubmit" class="btn btn-primary">Upload</button>
+              <button id="qSubmit" class="btn btn-primary">Kirim</button>
               <button id="qRefresh" class="btn">Refresh</button>
             </div>
             <div id="questsAlert"></div>
@@ -254,70 +265,77 @@
       </div>
     </section>
 
-    <!-- Info (Neura via Proxy) -->
+    <!-- Info (Neura) -->
     <section id="info" class="section">
       <div class="card panel">
-        <div class="muted" style="font-size:12px;margin-bottom:10px">
-          Info menggunakan Neura API lewat proxy Apps Script (anti CORS).
-        </div>
-
-        <div class="grid2">
-          <div class="card panel" style="background:rgba(0,0,0,.14)">
+        <div class="infoGrid">
+          <div class="card panel">
             <div class="row" style="justify-content:space-between">
-              <b>Banner Ava</b>
-              <button id="infoBannerBtn" class="btn">Load</button>
+              <div>
+                <div style="font-weight:800">Banner Ava</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">Data dari Neura</div>
+              </div>
+              <button id="loadBanner" class="btn">Load</button>
             </div>
-            <div id="infoBannerOut" class="note"></div>
+            <div class="hr"></div>
+            <div id="bannerBox" class="note">Klik Load untuk menampilkan banner.</div>
           </div>
 
-          <div class="card panel" style="background:rgba(0,0,0,.14)">
+          <div class="card panel">
             <div class="row" style="justify-content:space-between">
-              <b>Buff</b>
-              <button id="infoBuffListBtn" class="btn">List</button>
+              <div>
+                <div style="font-weight:800">Buff</div>
+                <div class="muted" style="font-size:12px;margin-top:4px">List & Search</div>
+              </div>
+              <button id="loadBuff" class="btn">Load</button>
             </div>
-            <div class="row" style="margin-top:8px">
-              <input id="infoBuffQ" class="input" placeholder="Search idname (contoh: atk)" />
-              <button id="infoBuffSearchBtn" class="btn btn-primary">Search</button>
+            <div class="hr"></div>
+            <div class="row">
+              <input id="buffQuery" class="input" placeholder="Cari buff… (contoh: atk)" />
+              <button id="searchBuff" class="btn btn-primary">Cari</button>
             </div>
-            <div id="infoBuffOut" class="note"></div>
-          </div>
-        </div>
-
-        <div class="grid2" style="margin-top:12px">
-          <div class="card panel" style="background:rgba(0,0,0,.14)">
-            <b>Spot Leveling</b>
-            <div class="row" style="margin-top:8px">
-              <input id="infoLvCur" class="input" placeholder="current (contoh: 250)" />
-              <input id="infoLvRange" class="input" placeholder="range (contoh: 10)" />
-              <button id="infoLvBtn" class="btn btn-primary">Cari</button>
-            </div>
-            <div id="infoLvOut" class="note"></div>
+            <div id="buffBox" style="margin-top:12px"></div>
           </div>
 
-          <div class="card panel" style="background:rgba(0,0,0,.14)">
-            <div class="row" style="justify-content:space-between">
-              <b>Ability (Translate)</b>
-              <button id="infoAbilityListBtn" class="btn">List</button>
+          <div class="card panel">
+            <div style="font-weight:800">Spot Leveling</div>
+            <div class="muted" style="font-size:12px;margin-top:4px">Neura: lv/current & range</div>
+            <div class="hr"></div>
+            <div class="row">
+              <input id="lvCurrent" class="input" type="number" placeholder="Current level (contoh: 250)" />
+              <input id="lvRange" class="input" type="number" placeholder="Range (contoh: 10)" />
+              <button id="loadLv" class="btn btn-primary">Cari</button>
             </div>
-            <div class="row" style="margin-top:8px">
-              <input id="infoAbilityQ" class="input" placeholder="Search (contoh: critical)" />
-              <button id="infoAbilitySearchBtn" class="btn btn-primary">Search</button>
+            <div id="lvBox" style="margin-top:12px"></div>
+          </div>
+
+          <div class="card panel">
+            <div style="font-weight:800">Neura Endpoint Tester</div>
+            <div class="muted" style="font-size:12px;margin-top:4px">Kalau ada endpoint lain (item, xtal, dll) tes di sini.</div>
+            <div class="hr"></div>
+            <div class="row">
+              <input id="neuraEndpoint" class="input" placeholder="Contoh: buff | bannerava | ability/query=critical" />
+              <button id="neuraTest" class="btn btn-primary">Test</button>
             </div>
-            <div id="infoAbilityOut" class="note"></div>
+            <div id="neuraOut" style="margin-top:12px"></div>
           </div>
         </div>
-
-        <div class="hr"></div>
-        <div class="muted" style="font-size:12px;margin-bottom:6px">Neura Endpoint Tester</div>
-        <div class="row">
-          <input id="infoPath" class="input mono" placeholder="Contoh: buff, buff/idname=atk, lv/current=250&range=10" />
-          <button id="infoTestBtn" class="btn btn-primary">Test</button>
-        </div>
-        <pre id="infoRaw" class="mono" style="margin-top:10px;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:10px;min-height:72px"></pre>
-
-        <div id="infoAlert"></div>
       </div>
     </section>
+  </div>
+
+  <!-- Tree Drawer (mobile) -->
+  <div id="treeDrawer" class="modal" aria-hidden="true">
+    <div class="card modalCard">
+      <div class="panel">
+        <div class="modalTop">
+          <h3 class="modalTitle">Pilih Skill Tree</h3>
+          <button id="closeTreeDrawer" class="btn">Tutup</button>
+        </div>
+        <div class="hr"></div>
+        <div id="drawerTrees"></div>
+      </div>
+    </div>
   </div>
 
   <!-- Admin Modal -->
@@ -347,9 +365,7 @@
           <h3 id="skillModalTitle" class="modalTitle">Tambah Skill</h3>
           <button id="smCancel" class="btn">Tutup</button>
         </div>
-
         <div class="hr"></div>
-
         <div class="grid2">
           <div>
             <div class="muted" style="font-size:12px;margin-bottom:6px">Skill Tree</div>
@@ -395,6 +411,7 @@
         <div class="row" style="margin-top:12px">
           <button id="smSave" class="btn btn-primary">Simpan</button>
         </div>
+        <div id="skillModalAlert"></div>
       </div>
     </div>
   </div>
@@ -407,7 +424,6 @@
           <h3 id="treeModalTitle" class="modalTitle">Tambah Skill Tree</h3>
           <button id="tmCancel" class="btn">Tutup</button>
         </div>
-
         <div class="hr"></div>
 
         <div class="grid2">
@@ -443,17 +459,15 @@
     // WAJIB: isi URL Web App Apps Script kamu di sini
     // Contoh: https://script.google.com/macros/s/XXXX/exec
     // =========================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxhQDbT_tIDPNF3jKpANN8_dAbSTDh9hsFmivpkBorY9XY0r8bTO6T9oRS3tw8AQTGNiw/exec"; // <-- tempel URL kamu
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxhQDbT_tIDPNF3jKpANN8_dAbSTDh9hsFmivpkBorY9XY0r8bTO6T9oRS3tw8AQTGNiw/exec"; // <-- TEMPel URL kamu
 
-    // ImgBB (screenshot quest)
-    const IMGBB_KEY = "05d83387b53dda1991a18490ac86430a";
+    // ImgBB (quest screenshot)
+    const IMGBB_API_KEY = "05d83387b53dda1991a18490ac86430a";
 
     const ADMIN_PASSWORD = "Elderrol";
     const ADMIN_KEY = "elderrol_admin";
 
-    // Default trees (akan digabung dengan tree custom yang disimpan di sheet Skills kolom J-M)
     const DEFAULT_TREES = [
-      // Weapon
       {key:'Blade', label:'Blade Skills', group:'Weapon', icon:'BL'},
       {key:'Shot', label:'Shot Skills', group:'Weapon', icon:'SH'},
       {key:'Magic', label:'Magic Skills', group:'Weapon', icon:'MG'},
@@ -464,7 +478,6 @@
       {key:'Barehand', label:'Barehand Skills', group:'Weapon', icon:'BH'},
       {key:'Crusher', label:'Crusher Skills', group:'Weapon', icon:'CR'},
       {key:'Sprite', label:'Sprite Skills', group:'Weapon', icon:'SP'},
-      // Buff
       {key:'Guard', label:'Guard Skills', group:'Buff', icon:'GD'},
       {key:'Shield', label:'Shield Skills', group:'Buff', icon:'SD'},
       {key:'Dagger', label:'Dagger Skills', group:'Buff', icon:'DG'},
@@ -478,14 +491,12 @@
       {key:'Ninja', label:'Ninja Skills', group:'Buff', icon:'NJ'},
       {key:'Partisan', label:'Partisan Skills', group:'Buff', icon:'PT'},
       {key:'Necromancer', label:'Necromancer Skills', group:'Buff', icon:'NC'},
-      // Assist
       {key:'Survival', label:'Survival Skills', group:'Assist', icon:'SV'},
       {key:'Support', label:'Support Skills', group:'Assist', icon:'SU'},
       {key:'Minstrel', label:'Minstrel Skills', group:'Assist', icon:'MS'},
       {key:'Dancer', label:'Dancer Skills', group:'Assist', icon:'DC'},
       {key:'Battle', label:'Battle Skills', group:'Assist', icon:'BT'},
       {key:'Golem', label:'Golem Skills', group:'Assist', icon:'GL'},
-      // Other
       {key:'Smith', label:'Smith Skills', group:'Other', icon:'SM'},
       {key:'Alchemy', label:'Alchemy Skills', group:'Other', icon:'AL'},
       {key:'Tamer', label:'Tamer Skills', group:'Other', icon:'TM'},
@@ -508,9 +519,7 @@
       {key:'DG',  label:'Dagger'},
     ];
 
-    // =========================
-    // DOM + utils
-    // =========================
+    // DOM
     const $ = (id)=>document.getElementById(id);
 
     function escapeHtml(t){
@@ -529,29 +538,23 @@
       }
     }
 
-    function setStatus(text){
-      $('statusText').textContent = text;
-    }
-
     function alertBox(target,msg,type){
       const cls = type==='ok'?'ok': type==='err'?'err':'info';
       const el = $(target);
       if(!el) return;
       el.innerHTML = '<div class="alert '+cls+'">'+escapeHtml(msg)+'</div>';
-      setTimeout(()=>{ if(el) el.innerHTML=''; }, 3200);
+      setTimeout(()=>{ if(el) el.innerHTML=''; }, 3500);
     }
 
-    async function runBusy(btn, busyText, fn){
-      if(!btn) return fn();
-      const oldText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = busyText || 'Proses...';
-      try{
-        const out = await fn();
-        return out;
-      }finally{
+    function setBusy(btn, busy, labelBusy){
+      if(!btn) return;
+      if(busy){
+        btn.dataset._old = btn.textContent;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spin"></span>' + escapeHtml(labelBusy || 'Memproses…');
+      }else{
         btn.disabled = false;
-        btn.textContent = oldText;
+        btn.textContent = btn.dataset._old || btn.textContent;
       }
     }
 
@@ -640,21 +643,21 @@
       return res;
     }
 
-    async function neura(path){
-      const res = await apiCall('neura_proxy', {path: String(path||'')});
-      return res.data;
+    // Neura via Apps Script proxy: action=neura_proxy
+    async function neura(endpoint){
+      const r = await apiCall('neura_proxy', { endpoint: String(endpoint||'').trim() });
+      return r.data;
     }
 
     // =========================
-    // Cleaners
+    // Cleaning
     // =========================
     function cleanTreeObj(t){
       const key = String(t.key||'').trim();
       const label = String(t.label||t.name||'').trim();
       const group = normalizeGroup(String(t.group||'Other').trim());
       const icon = String(t.icon||'').trim() || makeTreeIcon(label);
-      const updatedAt = Number(t.updatedAt || Date.now());
-      return {key,label,group,icon,updatedAt};
+      return {key,label,group,icon};
     }
 
     function cleanSkillObj(s){
@@ -723,15 +726,15 @@
           : '';
 
         const privateLine = showPrivate
-          ? '<div class="smeta">Nama: '+escapeHtml(m.name||'-')+' | HP: '+escapeHtml(m.phone||'-')+'</div>'
+          ? '<div class="imeta">Nama: '+escapeHtml(m.name||'-')+' | HP: '+escapeHtml(m.phone||'-')+'</div>'
           : '';
 
         return (
-          '<div class="skill-card">'
-          + '<div class="skill-card-top">'
+          '<div class="item-card">'
+          + '<div class="item-top">'
           +   '<div>'
-          +     '<div class="sname">'+escapeHtml(m.ign)+'</div>'
-          +     '<div class="smeta">'+escapeHtml(fmt(m.timestamp))+'</div>'
+          +     '<div class="iname">'+escapeHtml(m.ign)+'</div>'
+          +     '<div class="imeta">'+escapeHtml(fmt(m.timestamp))+'</div>'
           +     privateLine
           +   '</div>'
           +   actions
@@ -753,19 +756,21 @@
           : '';
 
         const img = q.screenshotUrl
-          ? '<img class="qthumb" src="'+escapeHtml(q.screenshotUrl)+'" alt="Screenshot" data-img="'+escapeHtml(q.screenshotUrl)+'" />'
-          : '<div class="note">Tidak ada gambar</div>';
+          ? '<a href="'+escapeHtml(q.screenshotUrl)+'" target="_blank" rel="noopener">'
+            + '<img class="qimg small" loading="lazy" src="'+escapeHtml(q.screenshotUrl)+'" alt="screenshot" />'
+            + '</a>'
+          : '<div class="note" style="padding:0">(Tanpa gambar)</div>';
 
         return (
-          '<div class="skill-card">'
-          + '<div class="skill-card-top">'
+          '<div class="item-card">'
+          + '<div class="item-top">'
           +   '<div>'
-          +     '<div class="sname">IGN: '+escapeHtml(q.ign)+'</div>'
-          +     '<div class="smeta">'+escapeHtml(fmt(q.timestamp))+'</div>'
+          +     '<div class="iname">IGN: '+escapeHtml(q.ign)+'</div>'
+          +     '<div class="imeta">'+escapeHtml(fmt(q.timestamp))+'</div>'
           +   '</div>'
           +   actions
           + '</div>'
-          + img
+          + '<div style="margin-top:10px">'+img+'</div>'
           + '</div>'
         );
       }).join('');
@@ -800,29 +805,34 @@
       $('gAssist').innerHTML = groups.Assist.map(tileHtml).join('') || '<div class="note">-</div>';
       $('gOther').innerHTML  = groups.Other.map(tileHtml).join('')  || '<div class="note">-</div>';
 
+      // drawer content (mobile)
+      const drawerHtml = ['Weapon','Buff','Assist','Other'].map(g=>{
+        const items = groups[g].map(tileHtml).join('') || '<div class="note">-</div>';
+        return '<h3 style="margin:12px 0 8px">'+escapeHtml(g)+'</h3>' + items;
+      }).join('');
+      $('drawerTrees').innerHTML = drawerHtml;
+
+      // Click handlers
       document.querySelectorAll('.tile[data-tree]').forEach(tile=>{
         tile.onclick = ()=>{
           selectedTree = tile.dataset.tree || '';
-          $('mobileTreeSelect').value = selectedTree;
-          renderTreeMenu();
-          renderSkillRight();
-          syncSkillActions();
+          syncSelectedTreeUI();
+          closeTreeDrawer();
         };
       });
 
-      const options = TREES.map(t=>'<option value="'+escapeHtml(t.key)+'">'+escapeHtml(t.label)+'</option>').join('');
-      $('smTree').innerHTML = options;
-      $('mobileTreeSelect').innerHTML = '<option value="">-- pilih --</option>'+options;
+      // selects
+      $('smTree').innerHTML = TREES.map(t=>'<option value="'+escapeHtml(t.key)+'">'+escapeHtml(t.label)+'</option>').join('');
+      $('mobileTreeSelect').innerHTML = TREES.map(t=>'<option value="'+escapeHtml(t.key)+'">'+escapeHtml(t.label)+'</option>').join('');
       if(selectedTree) $('mobileTreeSelect').value = selectedTree;
     }
 
     function syncSkillActions(){
-      const can = canManage();
-      const showActions = (!!selectedTree && can);
+      const showActions = (!!selectedTree && canManage());
       $('skillActions').style.display = showActions ? '' : 'none';
 
       $('treeTitle').textContent = selectedTree ? treeLabelByKey(selectedTree) : 'Belum memilih tree';
-      $('treeMeta').textContent = selectedTree ? 'Pilih skill di tree ini.' : 'Klik salah satu tree di panel kiri (atau dropdown di mobile).';
+      $('treeMeta').textContent = selectedTree ? 'Pilih skill di tree ini.' : 'Pilih tree untuk menampilkan daftar skill.';
     }
 
     function renderSkillRight(){
@@ -867,15 +877,15 @@
           : '';
 
         return (
-          '<div class="skill-card">'
-          + '<div class="skill-card-top">'
+          '<div class="item-card">'
+          + '<div class="item-top">'
           +   '<div>'
-          +     '<div class="sname">'+escapeHtml(s.name)+'</div>'
-          +     '<div class="smeta">'+meta+'</div>'
+          +     '<div class="iname">'+escapeHtml(s.name)+'</div>'
+          +     '<div class="imeta">'+meta+'</div>'
           +   '</div>'
           +   actions
           + '</div>'
-          + '<div class="sdesc">'+escapeHtml(s.desc||'-')+'</div>'
+          + '<div class="idesc">'+escapeHtml(s.desc||'-')+'</div>'
           + '</div>'
         );
       }
@@ -889,11 +899,18 @@
       let html = '';
       ['Active','Passive','Extra'].forEach(k=>{
         if(grouped[k].length===0) return;
-        html += '<div class="group" style="margin-top:6px"><h3>'+escapeHtml(kindLabel(k))+'</h3></div>';
+        html += '<div style="margin-top:6px"><h3 style="margin:10px 0 8px;color:#cfd6e6;font-size:13px">'+escapeHtml(kindLabel(k))+'</h3></div>';
         html += grouped[k].map(skillCard).join('');
       });
 
       $('skillList').innerHTML = html;
+    }
+
+    function syncSelectedTreeUI(){
+      renderTreeMenu();
+      syncSkillActions();
+      renderSkillRight();
+      if(selectedTree) $('mobileTreeSelect').value = selectedTree;
     }
 
     // =========================
@@ -902,6 +919,7 @@
     const adminModal = $('adminModal');
     const skillModal = $('skillModal');
     const treeModal = $('treeModal');
+    const treeDrawer = $('treeDrawer');
 
     function openAdminModal(){
       adminModal.classList.add('show');
@@ -909,6 +927,9 @@
       $('adminPass').focus();
     }
     function closeAdminModal(){ adminModal.classList.remove('show'); }
+
+    function openTreeDrawer(){ treeDrawer.classList.add('show'); }
+    function closeTreeDrawer(){ treeDrawer.classList.remove('show'); }
 
     function buildWeaponChecks(selectedKeys){
       const set = new Set(Array.isArray(selectedKeys) ? selectedKeys : []);
@@ -937,6 +958,7 @@
       $('smDesc').value  = String((data && data.desc) ? data.desc : '');
 
       buildWeaponChecks(data ? data.weapons : []);
+      $('skillModalAlert').innerHTML = '';
       skillModal.classList.add('show');
     }
 
@@ -959,10 +981,27 @@
     function closeTreeModal(){ treeModal.classList.remove('show'); }
 
     // =========================
+    // Upload ImgBB
+    // =========================
+    async function uploadToImgBB(file){
+      if(!file) throw new Error('File tidak ada');
+      const fd = new FormData();
+      fd.append('image', file);
+      const url = 'https://api.imgbb.com/1/upload?key=' + encodeURIComponent(IMGBB_API_KEY);
+      const res = await fetch(url, { method:'POST', body: fd });
+      const j = await res.json();
+      if(!j || !j.success) throw new Error((j && j.error && j.error.message) ? j.error.message : 'Upload ImgBB gagal');
+      return j.data && j.data.url ? j.data.url : (j.data && j.data.display_url ? j.data.display_url : '');
+    }
+
+    // =========================
     // Live refresh
     // =========================
     async function liveRefreshAll(){
-      const r1 = await apiCall('trees_list', {});
+      // trees_list bisa gagal (kalau backend belum update). Kita fallback ke default.
+      let r1 = { data: [] };
+      try { r1 = await apiCall('trees_list', {}); } catch(e) { r1 = { data: [] }; }
+
       const r2 = await apiCall('skills_list', {});
       const r3 = await apiCall('members_list', {});
       const r4 = await apiCall('quests_list', {});
@@ -979,51 +1018,43 @@
     }
 
     // =========================
-    // ImgBB Upload
+    // Neura render helpers
     // =========================
-    async function uploadToImgBB(file){
-      if(!file) throw new Error('File belum dipilih');
-      if(!IMGBB_KEY) throw new Error('IMGBB_KEY kosong');
-      const form = new FormData();
-      form.append('image', file);
-      const res = await fetch('https://api.imgbb.com/1/upload?key='+encodeURIComponent(IMGBB_KEY), {
-        method:'POST',
-        body: form
-      });
-      const data = await res.json().catch(()=>null);
-      if(!data || !data.success || !data.data || !data.data.url){
-        const msg = (data && data.error && data.error.message) ? data.error.message : 'Upload ImgBB gagal';
-        throw new Error(msg);
-      }
-      return data.data.url;
+    function normalizeTextBlock(s){
+      return String(s||'').replace(/\r\n/g,'
+').replace(/\n/g,'
+');
     }
 
-    // =========================
-    // Info render helpers
-    // =========================
-    function setJson(elId, data){
-      const el = $(elId);
-      if(!el) return;
-      const s = JSON.stringify(data, null, 2);
-      el.innerHTML = '<pre class="mono">'+escapeHtml(s)+'</pre>';
-    }
-
-    function summarizeArray(arr, pickKeys){
-      if(!Array.isArray(arr)) return null;
-      const keys = Array.isArray(pickKeys) ? pickKeys : ['name','title','idname','id','desc','description'];
-      return arr.slice(0, 30).map(x=>{
-        if(x && typeof x==='object'){
-          const o = {};
-          keys.forEach(k=>{ if(x[k]!=null) o[k]=x[k]; });
-          return Object.keys(o).length ? o : x;
-        }
-        return x;
-      });
+    function renderBuffList(items){
+      const arr = Array.isArray(items) ? items : [];
+      if(arr.length===0) return '<div class="note">Data buff kosong.</div>';
+      return arr.slice(0, 80).map(b=>{
+        const name = b && b.name ? String(b.name) : '-';
+        const code = normalizeTextBlock(b && b.code ? b.code : '');
+        return (
+          '<details style="margin-bottom:10px">'
+          + '<summary><b>'+escapeHtml(name)+'</b> <span class="muted" style="font-size:12px">(klik)</span></summary>'
+          + '<div class="pre" style="margin-top:8px">'+escapeHtml(code || '-')+'</div>'
+          + '</details>'
+        );
+      }).join('') + (arr.length>80 ? '<div class="note">Menampilkan 80 item pertama.</div>' : '');
     }
 
     // =========================
     // Boot + UI sync
     // =========================
+    async function boot(){
+      $('statusText').textContent = 'Menghubungkan ke spreadsheet…';
+      try{
+        await liveRefreshAll();
+        $('statusText').textContent = 'Terhubung ✅';
+      }catch(e){
+        $('statusText').textContent = 'Gagal konek: ' + e.message;
+      }
+      syncAllUI();
+    }
+
     function syncAllUI(){
       applyAdminVisibility();
       $('adminBtn').textContent = isAdmin ? '👤 Admin (Logout)' : '🔐 Login Admin';
@@ -1032,24 +1063,6 @@
       renderTreeMenu();
       syncSkillActions();
       renderSkillRight();
-    }
-
-    async function boot(showToast){
-      if(!WEB_APP_URL){
-        setStatus('WEB_APP_URL belum diisi (edit index.html).');
-        syncAllUI();
-        return;
-      }
-      setStatus('Sinkronisasi data…');
-      try{
-        await liveRefreshAll();
-        setStatus('Terhubung ✓');
-        syncAllUI();
-        if(showToast) alertBox('skillsAlert','Refreshed','info');
-      }catch(e){
-        setStatus('Gagal konek: '+e.message);
-        alertBox('skillsAlert','Gagal sync: '+e.message,'err');
-      }
     }
 
     // =========================
@@ -1066,9 +1079,12 @@
     });
 
     $('refreshAll').addEventListener('click', async ()=>{
-      await runBusy($('refreshAll'),'Refresh…', ()=>boot(false));
+      setBusy($('refreshAll'), true, 'Refresh…');
+      await boot();
+      setBusy($('refreshAll'), false);
     });
 
+    // Admin
     $('adminBtn').addEventListener('click', ()=>{
       if(isAdmin){
         if(confirm('Logout admin?')){
@@ -1081,69 +1097,69 @@
       }
       openAdminModal();
     });
-
     $('adminCancel').addEventListener('click', closeAdminModal);
     adminModal.addEventListener('click', (e)=>{ if(e.target===adminModal) closeAdminModal(); });
-
     $('adminLogin').addEventListener('click', async ()=>{
-      await runBusy($('adminLogin'),'Login…', async ()=>{
-        const pass = $('adminPass').value;
-        if(pass !== ADMIN_PASSWORD){
-          alertBox('adminAlert','Password salah','err');
-          return;
-        }
-        isAdmin = true;
-        sessionStorage.setItem(ADMIN_KEY,'true');
-        closeAdminModal();
-        syncAllUI();
-        alertBox('skillsAlert','Login admin berhasil','ok');
-      });
+      const pass = $('adminPass').value;
+      if(pass !== ADMIN_PASSWORD){ alertBox('adminAlert','Password salah','err'); return; }
+      isAdmin = true;
+      sessionStorage.setItem(ADMIN_KEY,'true');
+      closeAdminModal();
+      syncAllUI();
+      alertBox('skillsAlert','Login admin berhasil','ok');
     });
 
+    // Tree drawer
+    $('openTreeDrawer').addEventListener('click', openTreeDrawer);
+    $('closeTreeDrawer').addEventListener('click', closeTreeDrawer);
+    treeDrawer.addEventListener('click', (e)=>{ if(e.target===treeDrawer) closeTreeDrawer(); });
+
+    $('mobileTreeSelect').addEventListener('change', ()=>{
+      selectedTree = $('mobileTreeSelect').value;
+      syncSelectedTreeUI();
+    });
+
+    // Members
     $('mAdd').addEventListener('click', async ()=>{
-      await runBusy($('mAdd'),'Mengirim…', async ()=>{
-        const ign = $('mIgn').value.trim();
-        if(!ign){ alertBox('membersAlert','IGN wajib diisi','err'); return; }
+      const btn = $('mAdd');
+      const ign = $('mIgn').value.trim();
+      if(!ign){ alertBox('membersAlert','IGN wajib diisi','err'); return; }
 
-        const rec = {
-          id: 'm'+Math.random().toString(16).slice(2),
-          ign,
-          name: $('mName').value.trim(),
-          phone: $('mPhone').value.trim(),
-          timestamp: Date.now()
-        };
+      const rec = {
+        id: 'm'+Math.random().toString(16).slice(2),
+        ign,
+        name: $('mName').value.trim(),
+        phone: $('mPhone').value.trim(),
+        timestamp: Date.now()
+      };
 
-        // optimistic UI
-        members.unshift(rec);
+      members.unshift(rec);
+      renderMembers();
+
+      try{
+        setBusy(btn, true, 'Kirim…');
+        await apiCall('members_upsert', {member: rec});
+        await liveRefreshAll();
         renderMembers();
-
-        try{
-          await apiCall('members_upsert', {member: rec});
-          $('mName').value=''; $('mIgn').value=''; $('mPhone').value='';
-          alertBox('membersAlert','Terkirim','ok');
-          // refresh in background (fast)
-          await liveRefreshAll();
-          renderMembers();
-        }catch(err){
-          // rollback
-          members = members.filter(x=>x.id!==rec.id);
-          renderMembers();
-          alertBox('membersAlert','Gagal kirim: '+err.message,'err');
-        }
-      });
+        alertBox('membersAlert','Terkirim','ok');
+      }catch(err){
+        members = members.filter(x=>x.id!==rec.id);
+        renderMembers();
+        alertBox('membersAlert','Gagal kirim: '+err.message,'err');
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
     $('mReset').addEventListener('click', ()=>{
-      $('mName').value='';
-      $('mIgn').value='';
-      $('mPhone').value='';
+      $('mName').value=''; $('mIgn').value=''; $('mPhone').value='';
     });
 
     $('mRefresh').addEventListener('click', async ()=>{
-      await runBusy($('mRefresh'),'Refresh…', async ()=>{
-        await boot(false);
-        alertBox('membersAlert','Refreshed','info');
-      });
+      setBusy($('mRefresh'), true, 'Refresh…');
+      await boot();
+      setBusy($('mRefresh'), false);
+      alertBox('membersAlert','Refreshed','info');
     });
 
     $('mList').addEventListener('click', async (e)=>{
@@ -1154,138 +1170,25 @@
       const id = btn.dataset.id;
       if(!confirm('Hapus anggota ini?')) return;
 
-      await runBusy(btn,'Hapus…', async ()=>{
-        const prev = members.slice();
-        members = members.filter(x=>x.id!==id);
+      const backup = members.slice();
+      members = members.filter(x=>x.id!==id);
+      renderMembers();
+
+      try{
+        await apiCall('members_delete', {pass: ADMIN_PASSWORD, id});
+        await liveRefreshAll();
         renderMembers();
-
-        try{
-          await apiCall('members_delete', {pass: ADMIN_PASSWORD, id});
-          await liveRefreshAll();
-          renderMembers();
-          alertBox('membersAlert','Dihapus','ok');
-        }catch(err){
-          members = prev;
-          renderMembers();
-          alertBox('membersAlert','Gagal hapus: '+err.message,'err');
-        }
-      });
-    });
-
-    // Quest preview
-    $('qFile').addEventListener('change', ()=>{
-      const f = $('qFile').files && $('qFile').files[0];
-      if(!f){ $('qPreview').style.display='none'; $('qPreview').src=''; return; }
-      const url = URL.createObjectURL(f);
-      $('qPreview').src = url;
-      $('qPreview').style.display='';
-    });
-
-    $('qSubmit').addEventListener('click', async ()=>{
-      await runBusy($('qSubmit'),'Upload…', async ()=>{
-        const ign = $('qIgn').value.trim();
-        if(!ign){ alertBox('questsAlert','IGN wajib diisi','err'); return; }
-        const file = $('qFile').files && $('qFile').files[0];
-        if(!file){ alertBox('questsAlert','Pilih file screenshot dulu','err'); return; }
-
-        alertBox('questsAlert','1/2 Upload ke ImgBB…','info');
-        const imgUrl = await uploadToImgBB(file);
-
-        alertBox('questsAlert','2/2 Simpan ke Spreadsheet…','info');
-        const rec = {
-          id:'q'+Math.random().toString(16).slice(2),
-          ign,
-          screenshotUrl: imgUrl,
-          timestamp: Date.now()
-        };
-
-        // optimistic
-        quests.unshift(rec);
-        renderQuests();
-
-        try{
-          await apiCall('quests_upsert', {quest: rec});
-          $('qIgn').value='';
-          $('qFile').value='';
-          $('qPreview').style.display='none';
-          $('qPreview').src='';
-          alertBox('questsAlert','Berhasil','ok');
-          await liveRefreshAll();
-          renderQuests();
-        }catch(err){
-          quests = quests.filter(x=>x.id!==rec.id);
-          renderQuests();
-          alertBox('questsAlert','Gagal simpan: '+err.message,'err');
-        }
-      });
-    });
-
-    $('qRefresh').addEventListener('click', async ()=>{
-      await runBusy($('qRefresh'),'Refresh…', async ()=>{
-        await boot(false);
-        alertBox('questsAlert','Refreshed','info');
-      });
-    });
-
-    $('qList').addEventListener('click', async (e)=>{
-      const img = e.target.closest('img[data-img]');
-      if(img){
-        const url = img.getAttribute('data-img');
-        if(url) window.open(url, '_blank', 'noopener');
-        return;
+        alertBox('membersAlert','Dihapus','ok');
+      }catch(err){
+        members = backup;
+        renderMembers();
+        alertBox('membersAlert','Gagal hapus: '+err.message,'err');
       }
-
-      const btn = e.target.closest('button[data-action="quest-delete"]');
-      if(!btn) return;
-      if(!isAdmin){ alertBox('questsAlert','Hanya admin','err'); return; }
-
-      const id = btn.dataset.id;
-      if(!confirm('Hapus data quest ini?')) return;
-
-      await runBusy(btn,'Hapus…', async ()=>{
-        const prev = quests.slice();
-        quests = quests.filter(x=>x.id!==id);
-        renderQuests();
-
-        try{
-          await apiCall('quests_delete', {pass: ADMIN_PASSWORD, id});
-          await liveRefreshAll();
-          renderQuests();
-          alertBox('questsAlert','Dihapus','ok');
-        }catch(err){
-          quests = prev;
-          renderQuests();
-          alertBox('questsAlert','Gagal hapus: '+err.message,'err');
-        }
-      });
     });
 
+    // Skills
     $('skillSearch').addEventListener('input', ()=>renderSkillRight());
 
-    $('mobileTreeSelect').addEventListener('change', ()=>{
-      selectedTree = $('mobileTreeSelect').value || '';
-      renderTreeMenu();
-      syncSkillActions();
-      renderSkillRight();
-    });
-
-    $('addSkill').addEventListener('click', ()=>openSkillModal('add'));
-    $('addTreeBtn').addEventListener('click', ()=>openTreeModal('add'));
-    $('mobileOpenTree').addEventListener('click', ()=>openTreeModal('add'));
-
-    $('editTree').addEventListener('click', ()=>{
-      const t = TREES.find(x=>x.key===selectedTree);
-      if(!t){ alertBox('skillsAlert','Tree tidak ditemukan','err'); return; }
-      openTreeModal('edit', t);
-    });
-
-    $('smCancel').addEventListener('click', closeSkillModal);
-    skillModal.addEventListener('click', (e)=>{ if(e.target===skillModal) closeSkillModal(); });
-
-    $('tmCancel').addEventListener('click', closeTreeModal);
-    treeModal.addEventListener('click', (e)=>{ if(e.target===treeModal) closeTreeModal(); });
-
-    // Skill list actions
     $('skillList').addEventListener('click', async (e)=>{
       const edit = e.target.closest('button[data-action="skill-edit"]');
       const del  = e.target.closest('button[data-action="skill-delete"]');
@@ -1304,248 +1207,343 @@
         const id = del.dataset.id;
         if(!confirm('Hapus skill ini?')) return;
 
-        await runBusy(del,'Hapus…', async ()=>{
-          const prev = skills.slice();
-          skills = skills.filter(x=>x.id!==id);
-          renderSkillRight();
-
-          try{
-            await apiCall('skills_delete', {pass: ADMIN_PASSWORD, id});
-            await liveRefreshAll();
-            renderSkillRight();
-            alertBox('skillsAlert','Skill dihapus','ok');
-          }catch(err){
-            skills = prev;
-            renderSkillRight();
-            alertBox('skillsAlert','Gagal hapus: '+err.message,'err');
-          }
-        });
-      }
-    });
-
-    // Save Skill
-    $('smSave').addEventListener('click', async ()=>{
-      await runBusy($('smSave'),'Simpan…', async ()=>{
-        if(!canManage()) return;
-
-        const type = $('smTree').value;
-        const kind = $('smKind').value;
-        const name = $('smName').value.trim();
-        if(!name){ alertBox('skillsAlert','Nama skill wajib diisi','err'); return; }
-
-        const level = $('smLevel').value.trim();
-        const desc  = $('smDesc').value.trim();
-
-        const weaponKeys = Array.from($('smWeapons').querySelectorAll('input[type="checkbox"]'))
-          .filter(x=>x.checked)
-          .map(x=>x.value);
-
-        const mpRaw = $('smMp').value.trim();
-        const mp = (mpRaw==='') ? '' : Number(mpRaw);
-        if(mpRaw!=='' && Number.isNaN(mp)){
-          alertBox('skillsAlert','MP harus angka','err');
-          return;
-        }
-
-        const rec = {
-          id: editingSkillId || ('s'+Math.random().toString(16).slice(2)),
-          type, kind,
-          weapons: weaponKeys,
-          name, level, mp, desc,
-          updatedAt: Date.now()
-        };
-
-        // optimistic update
-        const prev = skills.slice();
-        const idx = skills.findIndex(x=>x.id===rec.id);
-        if(idx>=0) skills[idx]=rec; else skills.unshift(rec);
-
-        selectedTree = type;
-        renderTreeMenu();
-        syncSkillActions();
+        const backup = skills.slice();
+        skills = skills.filter(x=>x.id!==id);
         renderSkillRight();
 
         try{
-          await apiCall('skills_upsert', {pass: ADMIN_PASSWORD, skill: rec});
-          closeSkillModal();
+          await apiCall('skills_delete', {pass: ADMIN_PASSWORD, id});
           await liveRefreshAll();
           renderSkillRight();
-          alertBox('skillsAlert','Skill tersimpan','ok');
+          alertBox('skillsAlert','Skill dihapus','ok');
         }catch(err){
-          skills = prev;
+          skills = backup;
           renderSkillRight();
-          alertBox('skillsAlert','Gagal simpan: '+err.message,'err');
+          alertBox('skillsAlert','Gagal hapus: '+err.message,'err');
         }
-      });
+      }
     });
 
-    // Save Tree
+    $('addSkill').addEventListener('click', ()=>openSkillModal('add'));
+    $('addTreeBtn').addEventListener('click', ()=>openTreeModal('add'));
+
+    $('editTree').addEventListener('click', ()=>{
+      const t = TREES.find(x=>x.key===selectedTree);
+      if(!t){ alertBox('skillsAlert','Tree tidak ditemukan','err'); return; }
+      openTreeModal('edit', t);
+    });
+
+    $('smCancel').addEventListener('click', closeSkillModal);
+    skillModal.addEventListener('click', (e)=>{ if(e.target===skillModal) closeSkillModal(); });
+
+    $('smSave').addEventListener('click', async ()=>{
+      if(!canManage()) return;
+      const btn = $('smSave');
+
+      const type = $('smTree').value;
+      const kind = $('smKind').value;
+      const name = $('smName').value.trim();
+      if(!name){ alertBox('skillModalAlert','Nama skill wajib diisi','err'); return; }
+
+      const level = $('smLevel').value.trim();
+      const desc  = $('smDesc').value.trim();
+
+      const weaponKeys = Array.from($('smWeapons').querySelectorAll('input[type="checkbox"]'))
+        .filter(x=>x.checked)
+        .map(x=>x.value);
+
+      const mpRaw = $('smMp').value.trim();
+      const mp = (mpRaw==='') ? '' : Number(mpRaw);
+      if(mpRaw!=='' && Number.isNaN(mp)){
+        alertBox('skillModalAlert','MP harus angka','err');
+        return;
+      }
+
+      const rec = {
+        id: editingSkillId || ('s'+Math.random().toString(16).slice(2)),
+        type, kind,
+        weapons: weaponKeys,
+        name, level, mp, desc,
+        updatedAt: Date.now()
+      };
+
+      const backup = skills.slice();
+      const idx = skills.findIndex(x=>x.id===rec.id);
+      if(idx>=0) skills[idx]=rec; else skills.unshift(rec);
+      selectedTree = type;
+      syncSelectedTreeUI();
+
+      try{
+        setBusy(btn, true, 'Simpan…');
+        await apiCall('skills_upsert', {pass: ADMIN_PASSWORD, skill: rec});
+        await liveRefreshAll();
+        syncSelectedTreeUI();
+        alertBox('skillsAlert','Skill tersimpan','ok');
+        closeSkillModal();
+      }catch(err){
+        skills = backup;
+        syncSelectedTreeUI();
+        alertBox('skillModalAlert','Gagal simpan: '+err.message,'err');
+      }finally{
+        setBusy(btn, false);
+      }
+    });
+
+    // Tree modal
+    $('tmCancel').addEventListener('click', closeTreeModal);
+    treeModal.addEventListener('click', (e)=>{ if(e.target===treeModal) closeTreeModal(); });
+
     $('tmSave').addEventListener('click', async ()=>{
-      await runBusy($('tmSave'),'Simpan…', async ()=>{
-        if(!canManage()) return;
+      if(!canManage()) return;
+      const btn = $('tmSave');
 
-        const group = normalizeGroup($('tmGroup').value);
-        const label = $('tmName').value.trim();
-        if(!label){ alertBox('treesAlert','Nama tree wajib diisi','err'); return; }
+      const group = normalizeGroup($('tmGroup').value);
+      const label = $('tmName').value.trim();
+      if(!label){ alertBox('treesAlert','Nama tree wajib diisi','err'); return; }
 
-        const key  = editingTreeKey || makeTreeKey(label, TREES);
-        const icon = makeTreeIcon(label);
-        const rec = {key,label,group,icon,updatedAt:Date.now()};
+      const key  = editingTreeKey || makeTreeKey(label, TREES);
+      const icon = makeTreeIcon(label);
+      const rec = {key,label,group,icon};
 
-        // optimistic
-        const prev = TREES.slice();
-        const byKey = new Map(TREES.map(t=>[t.key,t]));
-        byKey.set(key, rec);
-        TREES = Array.from(byKey.values());
+      const backup = TREES.slice();
+      const byKey = new Map(TREES.map(t=>[t.key,t]));
+      byKey.set(key, rec);
+      TREES = Array.from(byKey.values());
+      selectedTree = key;
+      syncSelectedTreeUI();
 
-        try{
-          await apiCall('trees_upsert', {pass: ADMIN_PASSWORD, tree: rec});
-          selectedTree = key;
-          closeTreeModal();
-          await liveRefreshAll();
-          renderTreeMenu();
-          syncSkillActions();
-          renderSkillRight();
-          alertBox('skillsAlert','Tree tersimpan','ok');
-        }catch(err){
-          TREES = prev;
-          renderTreeMenu();
-          alertBox('treesAlert','Gagal simpan tree: '+err.message,'err');
-        }
-      });
+      try{
+        setBusy(btn, true, 'Simpan…');
+        await apiCall('trees_upsert', {pass: ADMIN_PASSWORD, tree: rec});
+        await liveRefreshAll();
+        syncSelectedTreeUI();
+        alertBox('skillsAlert','Tree tersimpan','ok');
+        closeTreeModal();
+      }catch(err){
+        TREES = backup;
+        syncSelectedTreeUI();
+        alertBox('treesAlert','Gagal simpan tree: '+err.message,'err');
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
     $('tmDelete').addEventListener('click', async ()=>{
       if(!editingTreeKey) return;
       if(isDefaultTreeKey(editingTreeKey)){ alertBox('treesAlert','Default tree tidak boleh dihapus','err'); return; }
-      if(!confirm('Hapus tree ini?')) return;
+      if(!confirm('Hapus tree ini? (Skill di tree ini juga akan hilang)')) return;
 
-      await runBusy($('tmDelete'),'Hapus…', async ()=>{
-        const key = editingTreeKey;
-        const prevTrees = TREES.slice();
-        const prevSkills = skills.slice();
-        TREES = TREES.filter(t=>t.key!==key);
-        skills = skills.filter(s=>String(s.type)!==String(key));
+      const backupTrees = TREES.slice();
+      const backupSkills = skills.slice();
 
-        try{
-          await apiCall('trees_delete', {pass: ADMIN_PASSWORD, key});
-          selectedTree = '';
-          closeTreeModal();
-          await liveRefreshAll();
-          renderTreeMenu();
-          syncSkillActions();
-          renderSkillRight();
-          alertBox('skillsAlert','Tree dihapus','ok');
-        }catch(err){
-          TREES = prevTrees;
-          skills = prevSkills;
-          renderTreeMenu();
-          renderSkillRight();
-          alertBox('treesAlert','Gagal hapus tree: '+err.message,'err');
-        }
-      });
+      TREES = TREES.filter(t=>t.key!==editingTreeKey);
+      skills = skills.filter(s=>String(s.type)!==String(editingTreeKey));
+      if(selectedTree===editingTreeKey) selectedTree='';
+      syncSelectedTreeUI();
+
+      try{
+        await apiCall('trees_delete', {pass: ADMIN_PASSWORD, key: editingTreeKey});
+        await liveRefreshAll();
+        syncSelectedTreeUI();
+        alertBox('skillsAlert','Tree dihapus','ok');
+        closeTreeModal();
+      }catch(err){
+        TREES = backupTrees;
+        skills = backupSkills;
+        syncSelectedTreeUI();
+        alertBox('treesAlert','Gagal hapus tree: '+err.message,'err');
+      }
     });
 
-    // Info tab buttons (Neura via proxy)
-    $('infoTestBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoTestBtn'),'Test…', async ()=>{
-        const path = $('infoPath').value.trim();
-        if(!path){ alertBox('infoAlert','Isi endpoint dulu','err'); return; }
-        try{
-          const data = await neura(path);
-          $('infoRaw').textContent = JSON.stringify(data, null, 2);
-          alertBox('infoAlert','OK','ok');
-        }catch(e){
-          $('infoRaw').textContent = '';
-          alertBox('infoAlert','Gagal: '+e.message,'err');
-        }
-      });
+    // Quests
+    $('qFile').addEventListener('change', ()=>{
+      const f = $('qFile').files && $('qFile').files[0];
+      if(!f){ $('qPreviewWrap').style.display='none'; return; }
+      const url = URL.createObjectURL(f);
+      $('qPreview').src = url;
+      $('qPreviewWrap').style.display='block';
     });
 
-    $('infoBannerBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoBannerBtn'),'Load…', async ()=>{
-        try{
-          const data = await neura('bannerava');
-          // show short summary
-          const summary = summarizeArray(data) || data;
-          setJson('infoBannerOut', summary);
-        }catch(e){
-          alertBox('infoAlert','Banner gagal: '+e.message,'err');
-        }
-      });
+    $('qSubmit').addEventListener('click', async ()=>{
+      const btn = $('qSubmit');
+      const ign = $('qIgn').value.trim();
+      if(!ign){ alertBox('questsAlert','IGN wajib diisi','err'); return; }
+      const file = $('qFile').files && $('qFile').files[0];
+      if(!file){ alertBox('questsAlert','Pilih gambar screenshot dulu','err'); return; }
+
+      let url = '';
+      try{
+        setBusy(btn, true, 'Upload…');
+        url = await uploadToImgBB(file);
+      }catch(err){
+        setBusy(btn, false);
+        alertBox('questsAlert','Upload gagal: '+err.message,'err');
+        return;
+      }
+
+      const rec = {
+        id:'q'+Math.random().toString(16).slice(2),
+        ign,
+        screenshotUrl: url,
+        timestamp: Date.now()
+      };
+
+      const backup = quests.slice();
+      quests.unshift(rec);
+      renderQuests();
+
+      try{
+        setBusy(btn, true, 'Kirim…');
+        await apiCall('quests_upsert', {quest: rec});
+        $('qFile').value='';
+        $('qPreviewWrap').style.display='none';
+        await liveRefreshAll();
+        renderQuests();
+        alertBox('questsAlert','Terkirim','ok');
+      }catch(err){
+        quests = backup;
+        renderQuests();
+        alertBox('questsAlert','Gagal kirim: '+err.message,'err');
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
-    $('infoBuffListBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoBuffListBtn'),'Load…', async ()=>{
-        try{
-          const data = await neura('buff');
-          const summary = summarizeArray(data) || data;
-          setJson('infoBuffOut', summary);
-        }catch(e){
-          alertBox('infoAlert','Buff gagal: '+e.message,'err');
-        }
-      });
+    $('qRefresh').addEventListener('click', async ()=>{
+      setBusy($('qRefresh'), true, 'Refresh…');
+      await boot();
+      setBusy($('qRefresh'), false);
+      alertBox('questsAlert','Refreshed','info');
     });
 
-    $('infoBuffSearchBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoBuffSearchBtn'),'Search…', async ()=>{
-        const q = $('infoBuffQ').value.trim();
-        if(!q){ alertBox('infoAlert','Isi kata kunci buff','err'); return; }
-        try{
-          const data = await neura('buff/idname='+encodeURIComponent(q));
-          setJson('infoBuffOut', data);
-        }catch(e){
-          alertBox('infoAlert','Search buff gagal: '+e.message,'err');
-        }
-      });
+    $('qList').addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button[data-action="quest-delete"]');
+      if(!btn) return;
+      if(!isAdmin){ alertBox('questsAlert','Hanya admin','err'); return; }
+
+      const id = btn.dataset.id;
+      if(!confirm('Hapus data quest ini?')) return;
+
+      const backup = quests.slice();
+      quests = quests.filter(x=>x.id!==id);
+      renderQuests();
+
+      try{
+        await apiCall('quests_delete', {pass: ADMIN_PASSWORD, id});
+        await liveRefreshAll();
+        renderQuests();
+        alertBox('questsAlert','Dihapus','ok');
+      }catch(err){
+        quests = backup;
+        renderQuests();
+        alertBox('questsAlert','Gagal hapus: '+err.message,'err');
+      }
     });
 
-    $('infoLvBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoLvBtn'),'Cari…', async ()=>{
-        const cur = $('infoLvCur').value.trim();
-        const range = $('infoLvRange').value.trim();
-        if(!cur || !range){ alertBox('infoAlert','Isi current & range','err'); return; }
-        try{
-          const data = await neura('lv/current='+encodeURIComponent(cur)+'&range='+encodeURIComponent(range));
-          setJson('infoLvOut', data);
-        }catch(e){
-          alertBox('infoAlert','Leveling gagal: '+e.message,'err');
+    // Info / Neura
+    $('loadBanner').addEventListener('click', async ()=>{
+      const btn = $('loadBanner');
+      try{
+        setBusy(btn, true, 'Load…');
+        const data = await neura('bannerava');
+        if(Array.isArray(data)){
+          $('bannerBox').innerHTML = data.slice(0,10).map(x=>'<div class="item-card"><div class="iname">'+escapeHtml(String(x.title||x.name||x.id||'Banner'))+'</div>'
+            + (x.url ? '<div class="imeta"><a href="'+escapeHtml(x.url)+'" target="_blank" rel="noopener">Open</a></div>' : '')
+            + '</div>').join('') || '<div class="note">Kosong</div>';
+        }else{
+          $('bannerBox').innerHTML = '<div class="pre">'+escapeHtml(JSON.stringify(data,null,2))+'</div>';
         }
-      });
+      }catch(err){
+        $('bannerBox').innerHTML = '<div class="alert err">Gagal: '+escapeHtml(err.message)+'</div>';
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
-    $('infoAbilityListBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoAbilityListBtn'),'Load…', async ()=>{
-        try{
-          const data = await neura('ability');
-          const summary = summarizeArray(data) || data;
-          setJson('infoAbilityOut', summary);
-        }catch(e){
-          alertBox('infoAlert','Ability gagal: '+e.message,'err');
-        }
-      });
+    $('loadBuff').addEventListener('click', async ()=>{
+      const btn = $('loadBuff');
+      try{
+        setBusy(btn, true, 'Load…');
+        const data = await neura('buff');
+        const list = (data && data.result) ? data.result : data;
+        $('buffBox').innerHTML = renderBuffList(list);
+      }catch(err){
+        $('buffBox').innerHTML = '<div class="alert err">Gagal: '+escapeHtml(err.message)+'</div>';
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
-    $('infoAbilitySearchBtn').addEventListener('click', async ()=>{
-      await runBusy($('infoAbilitySearchBtn'),'Search…', async ()=>{
-        const q = $('infoAbilityQ').value.trim();
-        if(!q){ alertBox('infoAlert','Isi kata kunci ability','err'); return; }
-        try{
-          const data = await neura('ability/query='+encodeURIComponent(q));
-          setJson('infoAbilityOut', data);
-        }catch(e){
-          alertBox('infoAlert','Search ability gagal: '+e.message,'err');
-        }
-      });
+    $('searchBuff').addEventListener('click', async ()=>{
+      const btn = $('searchBuff');
+      const q = $('buffQuery').value.trim();
+      if(!q){ $('buffBox').innerHTML = '<div class="alert err">Isi kata kunci dulu</div>'; return; }
+      try{
+        setBusy(btn, true, 'Cari…');
+        const data = await neura('buff/idname=' + encodeURIComponent(q));
+        const list = (data && data.result) ? data.result : data;
+        $('buffBox').innerHTML = renderBuffList(list);
+      }catch(err){
+        $('buffBox').innerHTML = '<div class="alert err">Gagal: '+escapeHtml(err.message)+'</div>';
+      }finally{
+        setBusy(btn, false);
+      }
     });
 
-    // =========================
-    // Init
-    // =========================
-    renderTreeMenu();
-    syncAllUI();
-    boot(false);
+    $('loadLv').addEventListener('click', async ()=>{
+      const btn = $('loadLv');
+      const cur = $('lvCurrent').value.trim();
+      const rng = $('lvRange').value.trim();
+      if(!cur || !rng){ $('lvBox').innerHTML = '<div class="alert err">Isi current & range</div>'; return; }
+      try{
+        setBusy(btn, true, 'Cari…');
+        const data = await neura('lv/current=' + encodeURIComponent(cur) + '&range=' + encodeURIComponent(rng));
+        const txt = (data && data.result) ? data.result : data;
+        if(typeof txt === 'string'){
+          $('lvBox').innerHTML = '<div class="pre">'+escapeHtml(normalizeTextBlock(txt))+'</div>';
+        }else{
+          $('lvBox').innerHTML = '<div class="pre">'+escapeHtml(JSON.stringify(txt,null,2))+'</div>';
+        }
+      }catch(err){
+        $('lvBox').innerHTML = '<div class="alert err">Gagal: '+escapeHtml(err.message)+'</div>';
+      }finally{
+        setBusy(btn, false);
+      }
+    });
 
+    $('neuraTest').addEventListener('click', async ()=>{
+      const btn = $('neuraTest');
+      const ep = $('neuraEndpoint').value.trim();
+      if(!ep){ $('neuraOut').innerHTML = '<div class="alert err">Isi endpoint dulu</div>'; return; }
+      try{
+        setBusy(btn, true, 'Test…');
+        const data = await neura(ep);
+        const list = (data && typeof data==='object' && 'result' in data) ? data.result : null;
+        if(Array.isArray(list)){
+          $('neuraOut').innerHTML = '<div class="note">Result array: '+escapeHtml(String(list.length))+' item.</div>'
+            + '<div class="pre">'+escapeHtml(JSON.stringify(list.slice(0,15),null,2))+'</div>'
+            + '<div class="note">(Menampilkan 15 pertama)</div>';
+        }else{
+          $('neuraOut').innerHTML = '<div class="pre">'+escapeHtml(JSON.stringify(data,null,2))+'</div>';
+        }
+      }catch(err){
+        $('neuraOut').innerHTML = '<div class="alert err">Gagal: '+escapeHtml(err.message)+'</div>';
+      }finally{
+        setBusy(btn, false);
+      }
+    });
+
+    // Helpers
+    function syncSelectedTreeUI(){
+      renderTreeMenu();
+      syncSkillActions();
+      renderSkillRight();
+      if(selectedTree) $('mobileTreeSelect').value = selectedTree;
+    }
+
+    $('adminPass').addEventListener('keydown', (e)=>{ if(e.key==='Enter') $('adminLogin').click(); });
+
+    boot();
   })();
   </script>
 </body>
