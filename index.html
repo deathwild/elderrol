@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elderrol Web App</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">ER</div>
+        <div>
+          <div class="title">Elderrol Web App</div>
+          <div id="statusText" class="muted small">Menghubungkan ke spreadsheet…</div>
+        </div>
+      </div>
+
+      <div class="rightTools">
+        <div id="modePill" class="pill">Live</div>
+        <button id="refreshAll" class="btn">⟳ Refresh</button>
+        <button id="adminBtn" class="btn">🔐 Login Admin</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="members">Members</div>
+      <div class="tab" data-tab="skills">Skills</div>
+      <div class="tab" data-tab="quests">Quest</div>
+      <div class="tab" data-tab="info">Info</div>
+    </div>
+
+    <!-- Members -->
+    <section id="members" class="section active">
+      <div class="card panel">
+        <div class="grid2">
+          <div>
+            <div class="muted small label">Tambah Anggota</div>
+            <div class="grid2">
+              <input id="mName" class="input" placeholder="Nama (opsional)" />
+              <input id="mIgn" class="input" placeholder="IGN (wajib)" />
+            </div>
+            <div class="mt10">
+              <input id="mPhone" class="input" placeholder="No HP (opsional)" />
+            </div>
+            <div class="row mt10">
+              <button id="mAdd" class="btn btn-primary">Tambah</button>
+              <button id="mReset" class="btn">Reset</button>
+              <button id="mRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="membersAlert"></div>
+          </div>
+
+          <div>
+            <div class="muted small label">Daftar Anggota</div>
+            <div class="note">Nama & No HP hanya terlihat oleh admin.</div>
+            <div id="mList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="section">
+      <div class="skillLayout">
+        <!-- Left tree panel (desktop) -->
+        <div class="card panel treePane treeGroups">
+          <div class="row between">
+            <div>
+              <div class="muted small">Skill Tree</div>
+              <div class="note">Klik tree untuk lihat skill.</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <h3>Weapon</h3>
+          <div id="gWeapon" class="tiles"></div>
+
+          <h3>Buff</h3>
+          <div id="gBuff" class="tiles"></div>
+
+          <h3>Assist</h3>
+          <div id="gAssist" class="tiles"></div>
+
+          <h3>Other</h3>
+          <div id="gOther" class="tiles"></div>
+        </div>
+
+        <!-- Right -->
+        <div class="card panel">
+          <div class="skillHead">
+            <div>
+              <h2 id="treeTitle" class="skillTitle">Belum memilih tree</h2>
+              <div id="treeMeta" class="skillMeta">Pilih tree untuk menampilkan daftar skill.</div>
+            </div>
+
+            <div class="skillHeadRight">
+              <!-- Mobile tree select -->
+              <div class="treeSelectMobileWrap">
+                <div class="muted small label">Pilih tree</div>
+                <select id="treeSelectMobile"></select>
+              </div>
+
+              <div class="searchWrap">
+                <div class="muted small label">Cari skill</div>
+                <input id="skillSearch" class="input" placeholder="Cari nama / deskripsi" />
+              </div>
+
+              <div id="skillActions" class="row admin-only" style="display:none">
+                <button id="addSkill" class="btn btn-primary">+ Skill</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="skillList" class="mt12"></div>
+          <div id="skillsAlert"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quests -->
+    <section id="quests" class="section">
+      <div class="card panel">
+        <div class="grid2">
+          <div>
+            <div class="muted small label">Kirim Pengumpulan Quest</div>
+            <input id="qIgn" class="input" placeholder="IGN (wajib)" />
+
+            <div class="mt10">
+              <div class="muted small label">Screenshot (gambar)</div>
+              <input id="qFile" class="input" type="file" accept="image/*" />
+              <div id="qPreview" class="qPreview"></div>
+              <div class="note">Gambar akan di-upload ke ImgBB, lalu URL-nya disimpan ke Spreadsheet.</div>
+            </div>
+
+            <div class="row mt10">
+              <button id="qSubmit" class="btn btn-primary">Kirim</button>
+              <button id="qRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="questsAlert"></div>
+          </div>
+
+          <div>
+            <div class="muted small label">Daftar Pengumpulan</div>
+            <div id="qList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Info (Neura) -->
+    <section id="info" class="section">
+      <div class="card panel">
+        <div class="infoGrid">
+          <div class="infoCard">
+            <div class="infoHead">
+              <div>
+                <div class="infoTitle">Banner Ava</div>
+                <div class="infoMeta">Sumber: Neura API</div>
+              </div>
+              <button id="loadBanner" class="btn">Muat</button>
+            </div>
+            <div id="bannerBox" class="infoBody"></div>
+          </div>
+
+          <div class="infoCard">
+            <div class="infoHead">
+              <div>
+                <div class="infoTitle">Buff</div>
+                <div class="infoMeta">List + Search buff terbaru</div>
+              </div>
+              <button id="loadBuff" class="btn">Muat</button>
+            </div>
+
+            <div class="row mt10">
+              <input id="buffQuery" class="input" placeholder="Cari buff… (contoh: atk)" />
+              <button id="searchBuff" class="btn btn-primary">Cari</button>
+            </div>
+            <div id="buffBox" class="infoBody mt10"></div>
+          </div>
+
+          <div class="infoCard">
+            <div class="infoHead">
+              <div>
+                <div class="infoTitle">Spot Leveling</div>
+                <div class="infoMeta">Rute/spot leveling berdasar level</div>
+              </div>
+              <button id="loadLevel" class="btn">Muat</button>
+            </div>
+
+            <div class="grid2 mt10">
+              <div>
+                <div class="muted small label">Current Level</div>
+                <input id="lvCurrent" class="input" placeholder="contoh: 120" />
+              </div>
+              <div>
+                <div class="muted small label">Range</div>
+                <input id="lvRange" class="input" placeholder="contoh: 10" />
+              </div>
+            </div>
+            <div class="row mt10">
+              <button id="searchLevel" class="btn btn-primary">Cari Spot</button>
+            </div>
+            <div id="levelBox" class="infoBody mt10"></div>
+          </div>
+
+          <div class="infoCard">
+            <div class="infoHead">
+              <div>
+                <div class="infoTitle">Item, Ability (ID), Xtal/Regis/Rute</div>
+                <div class="infoMeta">Butuh endpoint tambahan dari Neura API.</div>
+              </div>
+            </div>
+            <div class="note">
+              Dari root Neura API yang kamu kasih, endpoint yang diumumkan baru: <b>/bannerava</b>, <b>/buff</b>, dan <b>/lv</b>.
+              Kalau kamu punya endpoint untuk item / ability / xtal / regis / rute, tinggal isi di bawah lalu coba.
+            </div>
+            <div class="row mt10">
+              <input id="customPath" class="input" placeholder="/xtal atau /item atau /ability" />
+              <button id="tryCustom" class="btn btn-primary">Coba</button>
+            </div>
+            <div id="customBox" class="infoBody mt10"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="modal" aria-hidden="true">
+    <div class="card modalCard">
+      <div class="panel">
+        <div class="modalTop">
+          <h3 class="modalTitle">Login Admin</h3>
+          <button id="adminCancel" class="btn">Tutup</button>
+        </div>
+        <div class="hr"></div>
+        <div class="muted small label">Password</div>
+        <input id="adminPass" class="input" type="password" placeholder="Masukkan password" />
+        <div class="row mt10">
+          <button id="adminLogin" class="btn btn-primary">Login</button>
+        </div>
+        <div id="adminAlert"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Modal -->
+  <div id="skillModal" class="modal" aria-hidden="true">
+    <div class="card modalCard">
+      <div class="panel">
+        <div class="modalTop">
+          <h3 id="skillModalTitle" class="modalTitle">Tambah Skill</h3>
+          <button id="smCancel" class="btn">Tutup</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div>
+            <div class="muted small label">Skill Tree</div>
+            <select id="smTree"></select>
+          </div>
+          <div>
+            <div class="muted small label">Jenis</div>
+            <select id="smKind">
+              <option value="Active">Aktif</option>
+              <option value="Passive">Pasif</option>
+              <option value="Extra">Extra</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid2 mt10">
+          <div>
+            <div class="muted small label">Nama Skill</div>
+            <input id="smName" class="input" placeholder="Contoh: Astute" />
+          </div>
+          <div>
+            <div class="muted small label">Level</div>
+            <input id="smLevel" class="input" placeholder="Contoh: Lv.10 / -" />
+          </div>
+        </div>
+
+        <div class="grid2 mt10">
+          <div>
+            <div class="muted small label">MP</div>
+            <input id="smMp" class="input" placeholder="Contoh: 100" />
+          </div>
+          <div>
+            <div class="muted small label">Senjata</div>
+            <div id="smWeapons" class="wGrid"></div>
+          </div>
+        </div>
+
+        <div class="mt10">
+          <div class="muted small label">Deskripsi</div>
+          <textarea id="smDesc" placeholder="Deskripsi singkat"></textarea>
+        </div>
+
+        <div class="row mt12">
+          <button id="smSave" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
