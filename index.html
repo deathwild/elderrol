@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Elderrol Web App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">ER</div>
+        <div>
+          <div class="title">Elderrol Web App</div>
+          <div id="statusText" class="muted" style="font-size:12px">Menghubungkan ke spreadsheet…</div>
+        </div>
+      </div>
+
+      <div class="rightTools">
+        <div class="pill">Live</div>
+        <button id="refreshAll" class="btn">⟳ Refresh</button>
+        <button id="adminBtn" class="btn">🔐 Login Admin</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="members">Members</div>
+      <div class="tab" data-tab="skills">Skills</div>
+      <div class="tab" data-tab="quests">Quest</div>
+    </div>
+
+    <!-- Members -->
+    <section id="members" class="section active">
+      <div class="card panel">
+        <div class="grid2">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Tambah Anggota</div>
+            <div class="grid2">
+              <input id="mName" class="input" placeholder="Nama (opsional)" />
+              <input id="mIgn" class="input" placeholder="IGN (wajib)" />
+            </div>
+            <div style="margin-top:10px">
+              <input id="mPhone" class="input" placeholder="No HP (opsional)" />
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button id="mAdd" class="btn btn-primary">Tambah</button>
+              <button id="mReset" class="btn">Reset</button>
+              <button id="mRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="membersAlert"></div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Daftar Anggota</div>
+            <div class="note" style="padding-top:0">Nama & No HP hanya terlihat oleh admin.</div>
+            <div id="mList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section id="skills" class="section">
+      <div class="skillLayout">
+        <div class="card panel treeGroups">
+          <div class="row" style="justify-content:space-between">
+            <div>
+              <div class="muted" style="font-size:12px">Skill Tree</div>
+              <div class="note" style="margin:0;padding:6px 0 0">Klik tree untuk lihat skill.</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <h3>Weapon</h3>
+          <div id="gWeapon" class="tiles"></div>
+
+          <h3>Buff</h3>
+          <div id="gBuff" class="tiles"></div>
+
+          <h3>Assist</h3>
+          <div id="gAssist" class="tiles"></div>
+
+          <h3>Other</h3>
+          <div id="gOther" class="tiles"></div>
+        </div>
+
+        <div class="card panel">
+          <div class="skillHead">
+            <div>
+              <h2 id="treeTitle" class="skillTitle">Belum memilih tree</h2>
+              <div id="treeMeta" class="skillMeta">Klik salah satu tree di panel kiri.</div>
+            </div>
+            <div class="row" style="align-items:flex-end">
+              <div style="min-width:220px">
+                <div class="muted" style="font-size:12px;margin-bottom:6px">Cari skill</div>
+                <input id="skillSearch" class="input" placeholder="Cari nama / deskripsi" />
+              </div>
+              <div id="skillActions" class="row admin-only" style="display:none">
+                <button id="addSkill" class="btn btn-primary">+ Skill</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="skillList" style="margin-top:12px"></div>
+          <div id="skillsAlert"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quests -->
+    <section id="quests" class="section">
+      <div class="card panel">
+        <div class="grid2">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Kirim Pengumpulan Quest</div>
+            <input id="qIgn" class="input" placeholder="IGN (wajib)" />
+            <div style="margin-top:10px">
+              <input id="qUrl" class="input" placeholder="URL screenshot (opsional)" />
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button id="qSubmit" class="btn btn-primary">Kirim</button>
+              <button id="qRefresh" class="btn">Refresh</button>
+            </div>
+            <div id="questsAlert"></div>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Daftar Pengumpulan</div>
+            <div id="qList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" class="modal" aria-hidden="true">
+    <div class="card modalCard">
+      <div class="panel">
+        <div class="modalTop">
+          <h3 class="modalTitle">Login Admin</h3>
+          <button id="adminCancel" class="btn">Tutup</button>
+        </div>
+        <div class="hr"></div>
+        <div class="muted" style="font-size:12px;margin-bottom:6px">Password</div>
+        <input id="adminPass" class="input" type="password" placeholder="Masukkan password" />
+        <div class="row" style="margin-top:10px">
+          <button id="adminLogin" class="btn btn-primary">Login</button>
+        </div>
+        <div id="adminAlert"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skill Modal -->
+  <div id="skillModal" class="modal" aria-hidden="true">
+    <div class="card modalCard">
+      <div class="panel">
+        <div class="modalTop">
+          <h3 id="skillModalTitle" class="modalTitle">Tambah Skill</h3>
+          <button id="smCancel" class="btn">Tutup</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="grid2">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Skill Tree</div>
+            <select id="smTree"></select>
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Jenis</div>
+            <select id="smKind">
+              <option value="Active">Aktif</option>
+              <option value="Passive">Pasif</option>
+              <option value="Extra">Extra</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:10px" class="grid2">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Nama Skill</div>
+            <input id="smName" class="input" placeholder="Contoh: Astute" />
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Level</div>
+            <input id="smLevel" class="input" placeholder="Contoh: Lv.10 / -" />
+          </div>
+        </div>
+
+        <div style="margin-top:10px" class="grid2">
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">MP</div>
+            <input id="smMp" class="input" placeholder="Contoh: 100" />
+          </div>
+          <div>
+            <div class="muted" style="font-size:12px;margin-bottom:6px">Senjata</div>
+            <div id="smWeapons" class="wGrid"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted" style="font-size:12px;margin-bottom:6px">Deskripsi</div>
+          <textarea id="smDesc" placeholder="Deskripsi singkat"></textarea>
+        </div>
+
+        <div class="row" style="margin-top:12px">
+          <button id="smSave" class="btn btn-primary">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
