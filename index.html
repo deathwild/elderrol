@@ -75,9 +75,6 @@
 
     .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
 
-    /* Floating add button for preview */
-    .floatAdd{position:fixed;right:18px;bottom:18px;z-index:20}
-
     /* Modals */
     .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
     .modal.show{display:flex}
@@ -106,35 +103,14 @@
         <div class="logo">ER</div>
         <div>
           <div class="title">Elderrol Web App</div>
-          <div id="chipInfo" class="muted" style="font-size:12px">-</div>
+          <div id="statusText" class="muted" style="font-size:12px">Menghubungkan ke spreadsheet…</div>
         </div>
       </div>
 
       <div class="rightTools">
-        <div id="modePill" class="pill">Mode: <b>Preview</b></div>
+        <div class="pill">Live</div>
+        <button id="refreshAll" class="btn">⟳ Refresh</button>
         <button id="adminBtn" class="btn">🔐 Login Admin</button>
-      </div>
-    </div>
-
-    <div class="card panel" style="margin-top:14px">
-      <div class="grid2">
-        <div>
-          <div class="muted" style="font-size:12px;margin-bottom:6px">Apps Script Web App URL (Live Mode)</div>
-          <input id="urlInput" class="input" placeholder="Tempel URL Web App Apps Script di sini (kosong = Preview Mode)" />
-          <div class="row" style="margin-top:10px">
-            <button id="saveUrl" class="btn btn-primary">Simpan URL</button>
-            <button id="clearUrl" class="btn">Kosongkan (Preview)</button>
-          </div>
-          <div id="configAlert"></div>
-        </div>
-        <div>
-          <div class="muted" style="font-size:12px;margin-bottom:6px">Catatan</div>
-          <div class="note">
-            • Preview Mode: semua data tersimpan di browser (localStorage).<br>
-            • Live Mode: sinkron via Apps Script JSONP ke 1 Spreadsheet (3 sheet). Pastikan Web App bisa diakses publik (Anyone).<br>
-            • Password admin di file statis bisa terlihat. Untuk aman, validasi password harus dilakukan di Apps Script.
-          </div>
-        </div>
       </div>
     </div>
 
@@ -151,11 +127,11 @@
           <div>
             <div class="muted" style="font-size:12px;margin-bottom:6px">Tambah Anggota</div>
             <div class="grid2">
-              <input id="mName" class="input" placeholder="Nama (admin only di Live)" />
+              <input id="mName" class="input" placeholder="Nama (opsional)" />
               <input id="mIgn" class="input" placeholder="IGN (wajib)" />
             </div>
             <div style="margin-top:10px">
-              <input id="mPhone" class="input" placeholder="No HP (admin only di Live)" />
+              <input id="mPhone" class="input" placeholder="No HP (opsional)" />
             </div>
             <div class="row" style="margin-top:10px">
               <button id="mAdd" class="btn btn-primary">Tambah</button>
@@ -166,6 +142,7 @@
           </div>
           <div>
             <div class="muted" style="font-size:12px;margin-bottom:6px">Daftar Anggota</div>
+            <div class="note" style="padding-top:0">Nama & No HP hanya terlihat oleh admin.</div>
             <div id="mList"></div>
           </div>
         </div>
@@ -181,7 +158,7 @@
               <div class="muted" style="font-size:12px">Skill Tree</div>
               <div class="note" style="margin:0;padding:6px 0 0">Klik tree untuk lihat skill.</div>
             </div>
-            <button id="addTreeBtn" class="btn btn-primary" style="display:none">+ Tree</button>
+            <button id="addTreeBtn" class="btn btn-primary admin-only">+ Tree</button>
           </div>
 
           <div class="hr"></div>
@@ -210,7 +187,7 @@
                 <div class="muted" style="font-size:12px;margin-bottom:6px">Cari skill</div>
                 <input id="skillSearch" class="input" placeholder="Cari nama / deskripsi" />
               </div>
-              <div id="skillActions" class="row" style="display:none">
+              <div id="skillActions" class="row admin-only" style="display:none">
                 <button id="addSkill" class="btn btn-primary">+ Skill</button>
                 <button id="editTree" class="btn">Edit Tree</button>
               </div>
@@ -248,11 +225,6 @@
     </section>
   </div>
 
-  <!-- Floating add skill (Preview) -->
-  <div id="floatAdd" class="floatAdd" style="display:none">
-    <button id="quickAdd" class="btn btn-primary">+ Skill</button>
-  </div>
-
   <!-- Admin Modal -->
   <div id="adminModal" class="modal" aria-hidden="true">
     <div class="card modalCard">
@@ -280,7 +252,6 @@
           <h3 id="skillModalTitle" class="modalTitle">Tambah Skill</h3>
           <button id="smCancel" class="btn">Tutup</button>
         </div>
-        <div class="note" id="skillModalNote" style="margin:8px 0 0;padding:0">-</div>
 
         <div class="hr"></div>
 
@@ -341,7 +312,6 @@
           <h3 id="treeModalTitle" class="modalTitle">Tambah Skill Tree</h3>
           <button id="tmCancel" class="btn">Tutup</button>
         </div>
-        <div class="note" id="treeModalNote" style="margin:8px 0 0;padding:0">-</div>
 
         <div class="hr"></div>
 
@@ -365,6 +335,7 @@
           <button id="tmSave" class="btn btn-primary">Simpan</button>
           <button id="tmDelete" class="btn btn-danger" style="display:none">Hapus Tree</button>
         </div>
+        <div id="treesAlert"></div>
       </div>
     </div>
   </div>
@@ -374,20 +345,15 @@
     "use strict";
 
     // =========================
-    // Config + Keys
+    // WAJIB: isi URL Web App Apps Script kamu di sini
+    // Contoh: https://script.google.com/macros/s/XXXX/exec
     // =========================
-    const URL_KEY = 'ELDERROL_WEB_APP_URL';
-    let WEB_APP_URL = localStorage.getItem(URL_KEY) || '';
+    const WEB_APP_URL = ""; // <-- TEMPel URL kamu
 
-    const ADMIN_PASSWORD = 'Elderrol';
-    const ADMIN_KEY = 'elderrol_admin';
+    const ADMIN_PASSWORD = "Elderrol";
+    const ADMIN_KEY = "elderrol_admin";
 
-    const TREES_KEY   = 'ELDERROL_TREES_V1';
-    const SKILLS_KEY  = 'ELDERROL_SKILLS_V1';
-    const MEMBERS_KEY = 'ELDERROL_MEMBERS_V1';
-    const QUESTS_KEY  = 'ELDERROL_QUESTS_V1';
-
-    // Default trees
+    // Default trees (dipakai jika sheet trees kosong / tidak ada)
     const DEFAULT_TREES = [
       // Weapon
       {key:'Blade', label:'Blade Skills', group:'Weapon', icon:'BL'},
@@ -400,7 +366,6 @@
       {key:'Barehand', label:'Barehand Skills', group:'Weapon', icon:'BH'},
       {key:'Crusher', label:'Crusher Skills', group:'Weapon', icon:'CR'},
       {key:'Sprite', label:'Sprite Skills', group:'Weapon', icon:'SP'},
-
       // Buff
       {key:'Guard', label:'Guard Skills', group:'Buff', icon:'GD'},
       {key:'Shield', label:'Shield Skills', group:'Buff', icon:'SD'},
@@ -415,7 +380,6 @@
       {key:'Ninja', label:'Ninja Skills', group:'Buff', icon:'NJ'},
       {key:'Partisan', label:'Partisan Skills', group:'Buff', icon:'PT'},
       {key:'Necromancer', label:'Necromancer Skills', group:'Buff', icon:'NC'},
-
       // Assist
       {key:'Survival', label:'Survival Skills', group:'Assist', icon:'SV'},
       {key:'Support', label:'Support Skills', group:'Assist', icon:'SU'},
@@ -423,7 +387,6 @@
       {key:'Dancer', label:'Dancer Skills', group:'Assist', icon:'DC'},
       {key:'Battle', label:'Battle Skills', group:'Assist', icon:'BT'},
       {key:'Golem', label:'Golem Skills', group:'Assist', icon:'GL'},
-
       // Other
       {key:'Smith', label:'Smith Skills', group:'Other', icon:'SM'},
       {key:'Alchemy', label:'Alchemy Skills', group:'Other', icon:'AL'},
@@ -448,15 +411,9 @@
     ];
 
     // =========================
-    // DOM + Utils
+    // DOM + utils
     // =========================
     const $ = (id)=>document.getElementById(id);
-
-    function must(id){
-      const el = $(id);
-      if(!el) throw new Error('Elemen #' + id + ' tidak ditemukan. Pastikan HTML sudah lengkap.');
-      return el;
-    }
 
     function escapeHtml(t){
       const d = document.createElement('div');
@@ -481,9 +438,6 @@
       el.innerHTML = '<div class="alert '+cls+'">'+escapeHtml(msg)+'</div>';
       setTimeout(()=>{ if(el) el.innerHTML=''; }, 3500);
     }
-
-    function isLive(){ return !!WEB_APP_URL; }
-    function isPreview(){ return !isLive(); }
 
     function normalizeGroup(g){
       const ok = ['Weapon','Buff','Assist','Other'];
@@ -524,59 +478,7 @@
     }
 
     // =========================
-    // Local Storage
-    // =========================
-    function loadJSON(key, fallback){
-      try{
-        const raw = localStorage.getItem(key);
-        if(!raw) return fallback;
-        const parsed = JSON.parse(raw);
-        return (parsed == null) ? fallback : parsed;
-      }catch(e){
-        return fallback;
-      }
-    }
-
-    function saveJSON(key, value){
-      try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
-    }
-
-    function loadTreesLocal(){
-      const parsed = loadJSON(TREES_KEY, null);
-      if(!Array.isArray(parsed)) return DEFAULT_TREES.slice();
-
-      const clean = parsed
-        .filter(t=>t && typeof t==='object')
-        .map(t=>(
-          {
-            key: String(t.key||'').trim(),
-            label: String(t.label||'').trim(),
-            group: normalizeGroup(String(t.group||'Other').trim()),
-            icon: String(t.icon||'').trim() || makeTreeIcon(t.label)
-          }
-        ))
-        .filter(t=>t.key && t.label);
-
-      const byKey = new Map(DEFAULT_TREES.map(t=>[t.key,{...t}]));
-      clean.forEach(t=>byKey.set(t.key,t));
-      return Array.from(byKey.values());
-    }
-
-    function loadSkillsLocal(){
-      const parsed = loadJSON(SKILLS_KEY, []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-    function loadMembersLocal(){
-      const parsed = loadJSON(MEMBERS_KEY, []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-    function loadQuestsLocal(){
-      const parsed = loadJSON(QUESTS_KEY, []);
-      return Array.isArray(parsed) ? parsed : [];
-    }
-
-    // =========================
-    // Live API (Apps Script JSONP)
+    // JSONP API (Apps Script)
     // =========================
     function toB64(str){
       try{ return btoa(unescape(encodeURIComponent(String(str)))); }catch(e){ return ''; }
@@ -584,7 +486,7 @@
 
     function apiJsonp(action, payload){
       return new Promise((resolve, reject)=>{
-        if(!isLive()) return reject(new Error('Live Mode belum aktif'));
+        if(!WEB_APP_URL) return reject(new Error('WEB_APP_URL belum diisi'));
         const cb = '__elderrol_cb_' + Math.random().toString(16).slice(2);
         let script = null;
 
@@ -667,200 +569,24 @@
       return {id, ign, screenshotUrl, timestamp};
     }
 
-    async function liveRefreshAll(){
-      if(!isLive()) return;
-
-      const r1 = await apiCall('trees_list', {});
-      const r2 = await apiCall('skills_list', {});
-      const r3 = await apiCall('members_list', {});
-      const r4 = await apiCall('quests_list', {});
-
-      const byKey = new Map(DEFAULT_TREES.map(t=>[t.key,{...t}]));
-      (Array.isArray(r1.data)?r1.data:[]).map(cleanTreeObj).forEach(t=>{ if(t.key && t.label) byKey.set(t.key,t); });
-
-      TREES = Array.from(byKey.values());
-      skills  = (Array.isArray(r2.data)?r2.data:[]).map(cleanSkillObj).filter(s=>s.type && s.name);
-      members = (Array.isArray(r3.data)?r3.data:[]).map(cleanMemberObj).filter(m=>m.ign);
-      quests  = (Array.isArray(r4.data)?r4.data:[]).map(cleanQuestObj).filter(q=>q.ign);
-
-      saveJSON(TREES_KEY, TREES);
-      saveJSON(SKILLS_KEY, skills);
-      saveJSON(MEMBERS_KEY, members);
-      saveJSON(QUESTS_KEY, quests);
-    }
-
     // =========================
     // State
     // =========================
-    let TREES = loadTreesLocal();
-    let skills = loadSkillsLocal();
-    let members = loadMembersLocal();
-    let quests = loadQuestsLocal();
+    let TREES = DEFAULT_TREES.slice();
+    let skills = [];
+    let members = [];
+    let quests = [];
 
     let isAdmin = sessionStorage.getItem(ADMIN_KEY) === 'true';
     let selectedTree = '';
     let editingSkillId = '';
     let editingTreeKey = '';
 
-    // Seed preview
-    if(skills.length===0){
-      skills = [
-        {id:'s1', type:'Blade', kind:'Active', weapons:['1HS','2HS'], name:'Astute', level:'Lv.1', mp:100, desc:'Damage up, proration +', updatedAt: Date.now()-86400000},
-        {id:'s2', type:'Blade', kind:'Active', weapons:['1HS','2HS'], name:'Trigger Slash', level:'Lv.10', mp:200, desc:'Quick follow-up attack', updatedAt: Date.now()-5600000},
-        {id:'s3', type:'Magic', kind:'Active', weapons:['ST','MD'], name:'Magic: Storm', level:'Lv.10', mp:400, desc:'AoE magic storm', updatedAt: Date.now()-3600000},
-        {id:'s4', type:'Alchemy', kind:'Extra', weapons:[], name:'Craft Potion', level:'-', mp:'', desc:'Create potions', updatedAt: Date.now()-1800000},
-      ];
-      saveJSON(SKILLS_KEY, skills);
-    }
-
-    if(members.length===0){
-      members = [
-        {id:'m1', name:'Michael', ign:'Elderrol', phone:'08xxxxxxxxxx', timestamp: Date.now()-86400000},
-        {id:'m2', name:'Rin', ign:'RinNyaa', phone:'08xxxxxxxxxx', timestamp: Date.now()-3600000},
-      ];
-      saveJSON(MEMBERS_KEY, members);
-    }
-
-    if(quests.length===0){
-      quests = [{id:'q1', ign:'Elderrol', screenshotUrl:'', timestamp: Date.now()-7200000}];
-      saveJSON(QUESTS_KEY, quests);
-    }
-
-    // =========================
-    // Permission helpers
-    // =========================
-    function canManageSkills(){ return isPreview() || isAdmin; }
+    function canManage(){ return !!isAdmin; }
     function applyAdminVisibility(){ document.body.classList.toggle('is-admin', !!isAdmin); }
 
-    function activeTabKey(){
-      const t = document.querySelector('.tab.active');
-      return t ? t.dataset.tab : 'members';
-    }
-
-    function syncFloating(){
-      const el = $('floatAdd');
-      if(!el) return;
-      const show = (activeTabKey()==='skills' && isPreview() && canManageSkills());
-      el.style.display = show ? '' : 'none';
-    }
-
-    function updateModeUI(){
-      if($('urlInput')) $('urlInput').value = WEB_APP_URL;
-      if($('modePill')) $('modePill').innerHTML = 'Mode: <b>'+(isLive() ? 'Live' : 'Preview')+'</b>';
-      if($('chipInfo')) $('chipInfo').textContent = isLive()
-        ? 'Live Mode: sinkron ke 1 Spreadsheet (3 sheet)'
-        : 'Preview Mode: data lokal (bisa tambah skill/tree)';
-
-      if($('skillModalNote')) $('skillModalNote').textContent = isLive()
-        ? 'Live: simpan skill ke Spreadsheet (admin saja).'
-        : 'Preview: simpan skill ke data lokal.';
-
-      if($('treeModalNote')) $('treeModalNote').textContent = isLive()
-        ? 'Live: simpan tree ke Spreadsheet (admin saja).'
-        : 'Preview: tree tersimpan lokal.';
-    }
-
     // =========================
-    // Tabs
-    // =========================
-    document.querySelectorAll('.tab').forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-        tab.classList.add('active');
-        const key = tab.dataset.tab;
-        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-        const sec = $(key);
-        if(sec) sec.classList.add('active');
-        syncFloating();
-      });
-    });
-
-    // =========================
-    // Admin modal
-    // =========================
-    const adminModal = must('adminModal');
-
-    function openAdminModal(){
-      adminModal.classList.add('show');
-      const pass = $('adminPass');
-      if(pass){ pass.value=''; pass.focus(); }
-    }
-
-    function closeAdminModal(){ adminModal.classList.remove('show'); }
-
-    must('adminBtn').addEventListener('click', ()=>{
-      if(isAdmin){
-        if(confirm('Logout admin?')){
-          isAdmin=false;
-          sessionStorage.removeItem(ADMIN_KEY);
-          syncAllUI();
-          alertBox('adminAlert','Logout berhasil','ok');
-        }
-        return;
-      }
-      openAdminModal();
-    });
-
-    must('adminCancel').addEventListener('click', closeAdminModal);
-    adminModal.addEventListener('click', (e)=>{ if(e.target===adminModal) closeAdminModal(); });
-
-    must('adminLogin').addEventListener('click', async ()=>{
-      const pass = ($('adminPass') && $('adminPass').value) ? $('adminPass').value : '';
-      if(pass !== ADMIN_PASSWORD){
-        alertBox('adminAlert','Password salah','err');
-        return;
-      }
-      isAdmin = true;
-      sessionStorage.setItem(ADMIN_KEY,'true');
-      closeAdminModal();
-      syncAllUI();
-      alertBox('configAlert','Login admin berhasil','ok');
-
-      if(isLive()){
-        try{
-          await liveRefreshAll();
-          syncAllUI();
-          alertBox('configAlert','Live data berhasil di-load','ok');
-        }catch(e){
-          alertBox('configAlert','Live sync gagal: '+e.message,'err');
-        }
-      }
-    });
-
-    // =========================
-    // Mode switch (admin only)
-    // =========================
-    must('saveUrl').addEventListener('click', async ()=>{
-      if(!isAdmin){ alertBox('configAlert','Hanya admin yang boleh ubah Mode Preview/Live','err'); return; }
-      WEB_APP_URL = ( $('urlInput') ? $('urlInput').value.trim() : '' );
-      localStorage.setItem(URL_KEY, WEB_APP_URL);
-      updateModeUI();
-
-      if(isLive()){
-        try{
-          await liveRefreshAll();
-          alertBox('configAlert','Live Mode aktif & data sinkron','ok');
-        }catch(e){
-          alertBox('configAlert','Live Mode aktif tapi sync gagal: '+e.message,'err');
-        }
-      }else{
-        alertBox('configAlert','URL kosong. Balik ke Preview Mode.','info');
-      }
-
-      syncAllUI();
-    });
-
-    must('clearUrl').addEventListener('click', ()=>{
-      if(!isAdmin){ alertBox('configAlert','Hanya admin yang boleh ubah Mode Preview/Live','err'); return; }
-      WEB_APP_URL='';
-      localStorage.removeItem(URL_KEY);
-      updateModeUI();
-      alertBox('configAlert','Preview Mode aktif.','ok');
-      syncAllUI();
-    });
-
-    // =========================
-    // Members
+    // Renderers
     // =========================
     function renderMembers(){
       const showPrivate = !!isAdmin;
@@ -870,6 +596,7 @@
         const actions = showPrivate
           ? '<button class="btn btn-danger" data-action="member-delete" data-id="'+escapeHtml(m.id)+'">Hapus</button>'
           : '';
+
         const privateLine = showPrivate
           ? '<div class="smeta">Nama: '+escapeHtml(m.name||'-')+' | HP: '+escapeHtml(m.phone||'-')+'</div>'
           : '';
@@ -888,82 +615,9 @@
         );
       }).join('');
 
-      const el = $('mList');
-      if(el) el.innerHTML = rows || '<div class="note">Belum ada anggota.</div>';
+      $('mList').innerHTML = rows || '<div class="note">Belum ada anggota.</div>';
     }
 
-    must('mList').addEventListener('click', async (e)=>{
-      const btn = e.target.closest('button[data-action="member-delete"]');
-      if(!btn) return;
-      if(!isAdmin){ alertBox('membersAlert','Hanya admin','err'); return; }
-
-      const id = btn.dataset.id;
-      if(!confirm('Hapus anggota ini?')) return;
-
-      if(isLive()){
-        try{
-          await apiCall('members_delete', {pass: ADMIN_PASSWORD, id:id});
-          await liveRefreshAll();
-        }catch(err){
-          alertBox('membersAlert','Gagal hapus (Live): '+err.message,'err');
-          return;
-        }
-      }else{
-        members = members.filter(x=>x.id!==id);
-        saveJSON(MEMBERS_KEY, members);
-      }
-
-      renderMembers();
-      alertBox('membersAlert','Dihapus','ok');
-    });
-
-    must('mAdd').addEventListener('click', async ()=>{
-      const ign = must('mIgn').value.trim();
-      if(!ign){ alertBox('membersAlert','IGN wajib diisi','err'); return; }
-
-      const rec = {
-        id: 'm'+Math.random().toString(16).slice(2),
-        ign,
-        name: (isLive() && !isAdmin) ? '' : (( $('mName') ? $('mName').value.trim() : '' ) || '-'),
-        phone:(isLive() && !isAdmin) ? '' : (( $('mPhone') ? $('mPhone').value.trim() : '' ) || '-'),
-        timestamp: Date.now()
-      };
-
-      if(isLive()){
-        try{
-          await apiCall('members_upsert', {member: rec});
-          await liveRefreshAll();
-          alertBox('membersAlert','Terkirim (Live)','ok');
-        }catch(err){
-          alertBox('membersAlert','Gagal kirim (Live): '+err.message,'err');
-          return;
-        }
-      }else{
-        members.push(rec);
-        saveJSON(MEMBERS_KEY, members);
-        alertBox('membersAlert','Anggota ditambahkan (Preview)','ok');
-      }
-
-      renderMembers();
-    });
-
-    must('mReset').addEventListener('click', ()=>{
-      if($('mName')) $('mName').value='';
-      if($('mIgn')) $('mIgn').value='';
-      if($('mPhone')) $('mPhone').value='';
-    });
-
-    must('mRefresh').addEventListener('click', async ()=>{
-      if(isLive()){
-        try{ await liveRefreshAll(); }catch(err){ alertBox('membersAlert','Live refresh gagal: '+err.message,'err'); }
-      }
-      renderMembers();
-      alertBox('membersAlert','Refreshed','info');
-    });
-
-    // =========================
-    // Quests
-    // =========================
     function renderQuests(){
       const showActions = !!isAdmin;
       const list = quests.slice().sort((a,b)=>Number(b.timestamp)-Number(a.timestamp));
@@ -991,42 +645,375 @@
         );
       }).join('');
 
-      const el = $('qList');
-      if(el) el.innerHTML = rows || '<div class="note">Belum ada pengumpulan quest.</div>';
+      $('qList').innerHTML = rows || '<div class="note">Belum ada pengumpulan quest.</div>';
     }
 
-    must('qList').addEventListener('click', async (e)=>{
+    function treeLabelByKey(key){
+      const t = TREES.find(x=>String(x.key)===String(key));
+      return t ? t.label : String(key||'');
+    }
+
+    function renderTreeMenu(){
+      const groups = {Weapon:[], Buff:[], Assist:[], Other:[]};
+      TREES.forEach(t=>{ groups[normalizeGroup(t.group)].push(t); });
+
+      function tileHtml(t){
+        const active = (t.key===selectedTree) ? ' active' : '';
+        return (
+          '<div class="tile'+active+'" data-tree="'+escapeHtml(t.key)+'">'
+          + '<div class="icon">'+escapeHtml(t.icon||makeTreeIcon(t.label))+'</div>'
+          + '<div>'
+          +   '<div class="tname">'+escapeHtml(t.label)+'</div>'
+          +   '<div class="tsub">'+escapeHtml(t.group)+'</div>'
+          + '</div>'
+          + '</div>'
+        );
+      }
+
+      $('gWeapon').innerHTML = groups.Weapon.map(tileHtml).join('') || '<div class="note">-</div>';
+      $('gBuff').innerHTML   = groups.Buff.map(tileHtml).join('')   || '<div class="note">-</div>';
+      $('gAssist').innerHTML = groups.Assist.map(tileHtml).join('') || '<div class="note">-</div>';
+      $('gOther').innerHTML  = groups.Other.map(tileHtml).join('')  || '<div class="note">-</div>';
+
+      document.querySelectorAll('.tile[data-tree]').forEach(tile=>{
+        tile.onclick = ()=>{
+          selectedTree = tile.dataset.tree || '';
+          renderTreeMenu();
+          renderSkillRight();
+          syncSkillActions();
+        };
+      });
+
+      $('smTree').innerHTML = TREES.map(t=>'<option value="'+escapeHtml(t.key)+'">'+escapeHtml(t.label)+'</option>').join('');
+    }
+
+    function syncSkillActions(){
+      const can = canManage();
+      const showActions = (!!selectedTree && can);
+      $('skillActions').style.display = showActions ? '' : 'none';
+
+      $('treeTitle').textContent = selectedTree ? treeLabelByKey(selectedTree) : 'Belum memilih tree';
+      $('treeMeta').textContent = selectedTree ? 'Pilih skill di tree ini.' : 'Klik salah satu tree di panel kiri.';
+    }
+
+    function renderSkillRight(){
+      if(!selectedTree){
+        $('skillList').innerHTML = '<div class="note">Pilih tree untuk menampilkan daftar skill.</div>';
+        return;
+      }
+
+      const q = $('skillSearch').value.trim().toLowerCase();
+      const list = skills
+        .filter(s=>String(s.type||'')===String(selectedTree))
+        .filter(s=>{
+          if(!q) return true;
+          const hay = (String(s.name||'')+' '+String(s.desc||'')+' '+String(s.level||'')+' '+String(s.kind||'')).toLowerCase();
+          return hay.indexOf(q)>=0;
+        })
+        .slice()
+        .sort((a,b)=>Number(b.updatedAt)-Number(a.updatedAt));
+
+      if(list.length===0){
+        $('skillList').innerHTML = '<div class="note">Belum ada skill di tree ini.</div>';
+        return;
+      }
+
+      const can = canManage();
+
+      function skillCard(s){
+        const mpTxt = (s.mp==='' || s.mp==null) ? '' : (' | MP: '+escapeHtml(s.mp));
+        const meta = kindLabel(s.kind||'Active')
+          + ' | Senjata: ' + escapeHtml(weaponLabelList(s.weapons))
+          + (s.level ? (' | '+escapeHtml(s.level)) : '')
+          + mpTxt
+          + ' | Update: ' + escapeHtml(fmt(s.updatedAt));
+
+        const actions = can
+          ? (
+            '<div class="toolbar">'
+            + '<button class="btn btn-ghost" data-action="skill-edit" data-id="'+escapeHtml(s.id)+'">Edit</button>'
+            + '<button class="btn btn-danger" data-action="skill-delete" data-id="'+escapeHtml(s.id)+'">Hapus</button>'
+            + '</div>'
+          )
+          : '';
+
+        return (
+          '<div class="skill-card">'
+          + '<div class="skill-card-top">'
+          +   '<div>'
+          +     '<div class="sname">'+escapeHtml(s.name)+'</div>'
+          +     '<div class="smeta">'+meta+'</div>'
+          +   '</div>'
+          +   actions
+          + '</div>'
+          + '<div class="sdesc">'+escapeHtml(s.desc||'-')+'</div>'
+          + '</div>'
+        );
+      }
+
+      const grouped = {Active:[], Passive:[], Extra:[]};
+      list.forEach(s=>{
+        const k = (s.kind==='Passive' || s.kind==='Extra') ? s.kind : 'Active';
+        grouped[k].push(s);
+      });
+
+      let html = '';
+      ['Active','Passive','Extra'].forEach(k=>{
+        if(grouped[k].length===0) return;
+        html += '<div class="group" style="margin-top:6px"><h3>'+escapeHtml(kindLabel(k))+'</h3></div>';
+        html += grouped[k].map(skillCard).join('');
+      });
+
+      $('skillList').innerHTML = html;
+    }
+
+    // =========================
+    // Modals
+    // =========================
+    const adminModal = $('adminModal');
+    const skillModal = $('skillModal');
+    const treeModal = $('treeModal');
+
+    function openAdminModal(){
+      adminModal.classList.add('show');
+      $('adminPass').value='';
+      $('adminPass').focus();
+    }
+    function closeAdminModal(){ adminModal.classList.remove('show'); }
+
+    function buildWeaponChecks(selectedKeys){
+      const set = new Set(Array.isArray(selectedKeys) ? selectedKeys : []);
+      $('smWeapons').innerHTML = WEAPONS.map(w=>{
+        const checked = set.has(w.key) ? ' checked' : '';
+        return (
+          '<label class="wItem">'
+          + '<input type="checkbox" value="'+escapeHtml(w.key)+'"'+checked+' />'
+          + '<span>'+escapeHtml(w.label)+'</span>'
+          + '</label>'
+        );
+      }).join('');
+    }
+
+    function openSkillModal(mode, data){
+      if(!canManage()){ alertBox('skillsAlert','Hanya admin yang bisa tambah/edit skill','err'); return; }
+      editingSkillId = (mode==='edit' && data) ? String(data.id) : '';
+      $('skillModalTitle').textContent = (editingSkillId ? 'Edit Skill' : 'Tambah Skill');
+
+      const defaultTree = selectedTree || (TREES[0] ? TREES[0].key : '');
+      $('smTree').value  = String((data && data.type) ? data.type : defaultTree);
+      $('smKind').value  = String((data && data.kind) ? data.kind : 'Active');
+      $('smName').value  = String((data && data.name) ? data.name : '');
+      $('smLevel').value = String((data && data.level) ? data.level : '');
+      $('smMp').value    = (data && data.mp!=='' && data.mp!=null) ? String(data.mp) : '';
+      $('smDesc').value  = String((data && data.desc) ? data.desc : '');
+
+      buildWeaponChecks(data ? data.weapons : []);
+      skillModal.classList.add('show');
+    }
+
+    function closeSkillModal(){ skillModal.classList.remove('show'); }
+
+    function isDefaultTreeKey(key){ return DEFAULT_TREES.some(t=>t.key===key); }
+
+    function openTreeModal(mode, data){
+      if(!canManage()){ alertBox('skillsAlert','Hanya admin yang bisa tambah/edit tree','err'); return; }
+      editingTreeKey = (mode==='edit' && data) ? String(data.key) : '';
+
+      $('treeModalTitle').textContent = editingTreeKey ? 'Edit Skill Tree' : 'Tambah Skill Tree';
+      $('tmGroup').value = data ? normalizeGroup(String(data.group||'Other')) : 'Weapon';
+      $('tmName').value  = data ? String(data.label||'') : '';
+
+      $('tmDelete').style.display = (editingTreeKey && !isDefaultTreeKey(editingTreeKey)) ? '' : 'none';
+      treeModal.classList.add('show');
+    }
+
+    function closeTreeModal(){ treeModal.classList.remove('show'); }
+
+    // =========================
+    // Live refresh
+    // =========================
+    async function liveRefreshAll(){
+      const r1 = await apiCall('trees_list', {});
+      const r2 = await apiCall('skills_list', {});
+      const r3 = await apiCall('members_list', {});
+      const r4 = await apiCall('quests_list', {});
+
+      const byKey = new Map(DEFAULT_TREES.map(t=>[t.key,{...t}]));
+      (Array.isArray(r1.data)?r1.data:[]).map(cleanTreeObj).forEach(t=>{ if(t.key && t.label) byKey.set(t.key,t); });
+
+      TREES = Array.from(byKey.values());
+      skills  = (Array.isArray(r2.data)?r2.data:[]).map(cleanSkillObj).filter(s=>s.type && s.name);
+      members = (Array.isArray(r3.data)?r3.data:[]).map(cleanMemberObj).filter(m=>m.ign);
+      quests  = (Array.isArray(r4.data)?r4.data:[]).map(cleanQuestObj).filter(q=>q.ign);
+
+      if(!selectedTree && TREES[0]) selectedTree = TREES[0].key;
+    }
+
+    // =========================
+    // Events
+    // =========================
+    document.querySelectorAll('.tab').forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+        tab.classList.add('active');
+        const key = tab.dataset.tab;
+        document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+        $(key).classList.add('active');
+      });
+    });
+
+    $('refreshAll').addEventListener('click', async ()=>{
+      await boot(true);
+    });
+
+    $('adminBtn').addEventListener('click', ()=>{
+      if(isAdmin){
+        if(confirm('Logout admin?')){
+          isAdmin=false;
+          sessionStorage.removeItem(ADMIN_KEY);
+          syncAllUI();
+          alertBox('adminAlert','Logout berhasil','ok');
+        }
+        return;
+      }
+      openAdminModal();
+    });
+
+    $('adminCancel').addEventListener('click', closeAdminModal);
+    adminModal.addEventListener('click', (e)=>{ if(e.target===adminModal) closeAdminModal(); });
+
+    $('adminLogin').addEventListener('click', async ()=>{
+      const pass = $('adminPass').value;
+      if(pass !== ADMIN_PASSWORD){
+        alertBox('adminAlert','Password salah','err');
+        return;
+      }
+      isAdmin = true;
+      sessionStorage.setItem(ADMIN_KEY,'true');
+      closeAdminModal();
+      syncAllUI();
+      alertBox('skillsAlert','Login admin berhasil','ok');
+    });
+
+    $('mAdd').addEventListener('click', async ()=>{
+      const ign = $('mIgn').value.trim();
+      if(!ign){ alertBox('membersAlert','IGN wajib diisi','err'); return; }
+
+      const rec = {
+        id: 'm'+Math.random().toString(16).slice(2),
+        ign,
+        name: $('mName').value.trim(),
+        phone: $('mPhone').value.trim(),
+        timestamp: Date.now()
+      };
+
+      try{
+        await apiCall('members_upsert', {member: rec});
+        await liveRefreshAll();
+        renderMembers();
+        alertBox('membersAlert','Terkirim','ok');
+      }catch(err){
+        alertBox('membersAlert','Gagal kirim: '+err.message,'err');
+      }
+    });
+
+    $('mReset').addEventListener('click', ()=>{
+      $('mName').value='';
+      $('mIgn').value='';
+      $('mPhone').value='';
+    });
+
+    $('mRefresh').addEventListener('click', async ()=>{
+      await boot(true);
+      alertBox('membersAlert','Refreshed','info');
+    });
+
+    $('mList').addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button[data-action="member-delete"]');
+      if(!btn) return;
+      if(!isAdmin){ alertBox('membersAlert','Hanya admin','err'); return; }
+
+      const id = btn.dataset.id;
+      if(!confirm('Hapus anggota ini?')) return;
+
+      try{
+        await apiCall('members_delete', {pass: ADMIN_PASSWORD, id});
+        await liveRefreshAll();
+        renderMembers();
+        alertBox('membersAlert','Dihapus','ok');
+      }catch(err){
+        alertBox('membersAlert','Gagal hapus: '+err.message,'err');
+      }
+    });
+
+    $('qSubmit').addEventListener('click', async ()=>{
+      const ign = $('qIgn').value.trim();
+      if(!ign){ alertBox('questsAlert','IGN wajib diisi','err'); return; }
+
+      const rec = {
+        id:'q'+Math.random().toString(16).slice(2),
+        ign,
+        screenshotUrl: $('qUrl').value.trim(),
+        timestamp: Date.now()
+      };
+
+      try{
+        await apiCall('quests_upsert', {quest: rec});
+        $('qUrl').value='';
+        await liveRefreshAll();
+        renderQuests();
+        alertBox('questsAlert','Terkirim','ok');
+      }catch(err){
+        alertBox('questsAlert','Gagal kirim: '+err.message,'err');
+      }
+    });
+
+    $('qRefresh').addEventListener('click', async ()=>{
+      await boot(true);
+      alertBox('questsAlert','Refreshed','info');
+    });
+
+    $('qList').addEventListener('click', async (e)=>{
       const btn = e.target.closest('button[data-action="quest-delete"]');
       if(!btn) return;
-
       if(!isAdmin){ alertBox('questsAlert','Hanya admin','err'); return; }
 
       const id = btn.dataset.id;
       if(!confirm('Hapus data quest ini?')) return;
 
-      if(isLive()){
-        try{
-          await apiCall('quests_delete', {pass: ADMIN_PASSWORD, id:id});
-          await liveRefreshAll();
-        }catch(err){
-          alertBox('questsAlert','Gagal hapus (Live): '+err.message,'err');
-          return;
-        }
-      }else{
-        quests = quests.filter(x=>x.id!==id);
-        saveJSON(QUESTS_KEY, quests);
+      try{
+        await apiCall('quests_delete', {pass: ADMIN_PASSWORD, id});
+        await liveRefreshAll();
+        renderQuests();
+        alertBox('questsAlert','Dihapus','ok');
+      }catch(err){
+        alertBox('questsAlert','Gagal hapus: '+err.message,'err');
       }
-
-      renderQuests();
-      alertBox('questsAlert','Dihapus','ok');
     });
 
-    must('qSubmit').addEventListener('click', async ()=>{
-      const ign = must('qIgn').value.trim();
-      if(!ign){ alertBox('questsAlert','IGN wajib diisi','err'); return; }
+    $('skillSearch').addEventListener('input', ()=>renderSkillRight());
 
-      const rec = {
-        id:'q'+Math.random().toString(16).slice(2),
-        ign: ign,
-        screenshotUrl: ( $('qUrl') ? $('qUrl').value.trim() : '' ),
-        timestamp
+    $('addSkill').addEventListener('click', ()=>openSkillModal('add'));
+    $('addTreeBtn').addEventListener('click', ()=>openTreeModal('add'));
+
+    $('editTree').addEventListener('click', ()=>{
+      const t = TREES.find(x=>x.key===selectedTree);
+      if(!t){ alertBox('skillsAlert','Tree tidak ditemukan','err'); return; }
+      openTreeModal('edit', t);
+    });
+
+    $('smCancel').addEventListener('click', closeSkillModal);
+    skillModal.addEventListener('click', (e)=>{ if(e.target===skillModal) closeSkillModal(); });
+
+    $('smSave').addEventListener('click', async ()=>{
+      if(!canManage()) return;
+
+      const type = $('smTree').value;
+      const kind = $('smKind').value;
+      const name = $('smName').value.trim();
+      if(!name){ alertBox('skillsAlert','Nama skill wajib diisi','err'); return; }
+
+      const level = $('smLevel').value.trim();
+      const desc  = $('smDesc').value.trim();
+
+      const weaponKeys = Array.from($('smWeapons').querySelectorAll('input[type="ch
