@@ -5,7 +5,7 @@
   // Config
   // =========================
   const URL_KEY = "ELDERROL_WEB_APP_URL";
-  let WEB_APP_URL = localStorage.getItem(URL_KEY) || "";
+  let WEB_APP_URL = localStorage.getItem(URL_KEY) || "https://script.google.com/macros/s/AKfycbxhQDbT_tIDPNF3jKpANN8_dAbSTDh9hsFmivpkBorY9XY0r8bTO6T9oRS3tw8AQTGNiw/exec";
 
   const IMGBB_API_KEY = "05d83387b53dda1991a18490ac86430a";
   const ADMIN_PASSWORD = "Elderrol";
